@@ -1,0 +1,8 @@
+.title-container {
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  margin-left: 4px; /* Dodaj odstęp po prawej stronie ikony */
+}
