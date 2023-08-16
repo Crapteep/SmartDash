@@ -103,24 +103,24 @@ const componentList = {
   f: ContainedButton,
 };
 
-function Content({
-  devices,
-  selectedDeviceId,
-  setSelectedDeviceId,
+const Content = ({
+  deviceList,
+  selectedDevice,
   handleUpdateLayout,
-  setLayout
-}) {
-  const [items, setItems] = useState(originalItems);
-  const [layouts, setLayouts] = useState(
-    findDeviceById(devices, selectedDeviceId) || initialLayouts
-  );
-
+  layout,
+  setLayout,
+  handleChangeDevice,
+  itemList,
+}) => {
+  console.log("items", layout);
+  console.log("oitems", originalItems);
+  const [items, setItems] = useState(itemList);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  function findDeviceById(deviceList, deviceId) {
-    const foundDevice = deviceList?.find((device) => device._id === deviceId);
-    return foundDevice || null;
-  }
+  useEffect(() => {
+    // Przyjmuje nowy itemList z propsów i ustawia go w stanie lokalnym items
+    setItems(itemList);
+  }, [itemList]);
 
   const handleSelectionChange = (itemName, isSelected) => {
     if (isSelected) {
@@ -132,7 +132,7 @@ function Content({
 
   useEffect(() => {
     function handleResize() {
-      setLayouts((prevLayouts) => {
+      setLayout((prevLayouts) => {
         // Add a check for prevLayouts.lg before using map on it
         if (prevLayouts && prevLayouts.lg) {
           return {
@@ -155,14 +155,13 @@ function Content({
   }, []);
 
   const onLayoutChange = (_, allLayouts) => {
-    setLayouts(allLayouts);
+    setLayout(allLayouts);
   };
 
   const onLayoutSave = () => {
-    setLayout(layouts);
-    saveToLS("layouts", layouts);
+    // setLayout(layout);
+    saveToLS("layouts", layout);
     handleUpdateLayout();
-    console.log("layout", layouts);
   };
 
   const onRemoveItem = (itemId) => {
@@ -170,7 +169,7 @@ function Content({
   };
 
   const onAddItem = (itemId) => {
-    setItems([...items, itemId]);
+    // setItems([...items, itemId]);
   };
 
   const onLayoutEdit = () => {
@@ -198,13 +197,14 @@ function Content({
         onSelectionChange={handleSelectionChange}
         isEditMode={isEditMode}
         handleButtonClick={handleButtonClick}
-        devices={devices}
-        selectedDeviceId={selectedDeviceId}
-        setSelectedDeviceId={setSelectedDeviceId}
+        deviceList={deviceList}
+        selectedDevice={selectedDevice}
+        handleChangeDevice={handleChangeDevice}
       />
       <ResponsiveGridLayout
         className="layout"
-        layouts={layouts}
+        style={{border: "1px solid #ccc", borderRadius: "4px"}}
+        layout={layout}
         breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
         cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
         rowHeight={60}
@@ -212,41 +212,73 @@ function Content({
         onLayoutChange={onLayoutChange}
         isDraggable={isEditMode}
         isResizable={isEditMode}
-        isBounded={isEditMode}
+        isBounded={true}
       >
-        {items.map((key) => {
-          // Find the corresponding item in initialLayouts using the key
-          const layoutItem = initialLayouts.lg.find((item) => item.i === key);
+        {items &&
+          items.map((key) => {
+            const layoutItemLg =
+              layout && layout.lg
+                ? layout.lg.find((item) => item.i === key)
+                : null;
+            const layoutItemMd =
+              layout && layout.md
+                ? layout.md.find((item) => item.i === key)
+                : null;
+            const defaultLayout = initialLayouts.lg.find(
+              (item) => item.i === key
+            ); // Find default layout item
 
-          // If layoutItem is found, use its properties, otherwise fallback to default values
-          const gridData = layoutItem
-            ? {
-                w: layoutItem.w,
-                h: layoutItem.h,
-                x: layoutItem.x,
-                y: layoutItem.y,
-                minW: layoutItem.minW,
-                minH: layoutItem.minH,
-                maxW: layoutItem.maxW,
-                maxH: layoutItem.maxH,
-              }
-            : { w: 3, h: 2, x: 0, y: Infinity };
+            // Use layoutItemLg properties for lg breakpoint, or layoutItemMd properties for md breakpoint, or defaultLayout
+            const gridData = layoutItemLg
+              ? {
+                  w: layoutItemLg.w,
+                  h: layoutItemLg.h,
+                  x: layoutItemLg.x,
+                  y: layoutItemLg.y,
+                  minW: layoutItemLg.minW,
+                  minH: layoutItemLg.minH,
+                  maxW: layoutItemLg.maxW,
+                  maxH: layoutItemLg.maxH,
+                }
+              : layoutItemMd
+              ? {
+                  w: layoutItemMd.w,
+                  h: layoutItemMd.h,
+                  x: layoutItemMd.x,
+                  y: layoutItemMd.y,
+                  minW: layoutItemMd.minW,
+                  minH: layoutItemMd.minH,
+                  maxW: layoutItemMd.maxW,
+                  maxH: layoutItemMd.maxH,
+                }
+              : defaultLayout
+              ? {
+                  w: defaultLayout.w,
+                  h: defaultLayout.h,
+                  x: defaultLayout.x,
+                  y: defaultLayout.y,
+                  minW: defaultLayout.minW,
+                  minH: defaultLayout.minH,
+                  maxW: defaultLayout.maxW,
+                  maxH: defaultLayout.maxH,
+                }
+              : { w: 3, h: 2, x: 0, y: Infinity }; // If no defaultLayout found, use fallback values
 
-          return (
-            <div key={key} className="widget" data-grid={gridData}>
-              <Widget
-                id={key}
-                onRemoveItem={onRemoveItem}
-                component={componentList[key]}
-                isEditMode={isEditMode}
-              />
-            </div>
-          );
-        })}
+            return (
+              <div key={key} className="widget" data-grid={gridData}>
+                <Widget
+                  id={key}
+                  onRemoveItem={onRemoveItem}
+                  component={componentList[key]}
+                  isEditMode={isEditMode}
+                />
+              </div>
+            );
+          })}
       </ResponsiveGridLayout>
     </>
   );
-}
+};
 
 export default Content;
 
