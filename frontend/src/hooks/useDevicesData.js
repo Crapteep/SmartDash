@@ -3,7 +3,7 @@ import axios from "axios";
 
 const URL = process.env.REACT_APP_API_URL;
 
-const usePostsData = () => {
+const useDevicesData = () => {
   return useQuery({
     queryKey: "devices",
     queryFn: async () => {
@@ -15,4 +15,4 @@ const usePostsData = () => {
   });
 };
 
-export default usePostsData;
+export default useDevicesData;

@@ -2,20 +2,23 @@
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
+from ..core.models import crud
+from datetime import datetime, timedelta
+from jose import JWTError, jwt
+from dotenv import load_dotenv
+from fastapi import Depends, HTTPException
+from ..core.schemas.token import TokenData
+import os
+# from ..core.settings import Settings
 
+# print('settings',Settings.singleton())
 
+# settings = get_settings()
+# SECRET_KEY = settings.secret_key
+# ALGORITHM = settings.algorithm
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-from core.models.database import get_user
-from datetime import datetime, timedelta
-from jose import JWTError, jwt
-
-import os
-from dotenv import load_dotenv
-from fastapi import Depends, HTTPException
-from core.schemas.token import TokenData
 
 load_dotenv()
 
@@ -31,7 +34,7 @@ def get_password_hash(password):
 
 
 async def authenticate_user(username, password):
-    user = await get_user(username)
+    user = await crud.User.get_by_username(username)
     if not user:
         return False
     if not verify_password(password, user["password"]):
@@ -60,11 +63,10 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
             raise credential_exception
         
         token_data = TokenData(username=username)
-        print(token_data.username)
     except JWTError:
         raise credential_exception
     
-    user = await get_user(username=token_data.username)
+    user = await crud.User.get_by_username(username=token_data.username)
     if user is None:
         raise credential_exception
     return user

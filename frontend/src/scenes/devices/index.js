@@ -12,7 +12,7 @@ import ConfirmationDialog from "../../components/ConfirmDialogForms/Confirmation
 import { useQueryClient } from "react-query";
 import axios from "axios";
 import InfoDialog from "../../components/ConfirmDialogForms/InfoDialog";
-
+import AddIcon from '@mui/icons-material/Add';
 
 const Devices = () => {
   const URL = process.env.REACT_APP_API_URL;
@@ -60,7 +60,7 @@ const Devices = () => {
   };
 
   const handleDeleteClick = (device_id) => {
-    setRemovalDevice(device_id)
+    setRemovalDevice(device_id);
     setShowConfirmDialog(true);
   };
 
@@ -75,8 +75,7 @@ const Devices = () => {
       message: "The device has been successfully deleted!",
     });
     setShowInfoDialog(true);
-
-  } 
+  };
 
   const handleErrorDelete = () => {
     setDialogMessage({
@@ -84,11 +83,10 @@ const Devices = () => {
       message: "The device has not been removed!",
     });
     setShowInfoDialog(true);
-  }
-
+  };
 
   const handleConfirm = () => {
-    console.log(removalDevice)
+    console.log(removalDevice);
     axios
       .delete(`${URL}/devices/delete?device_id=${removalDevice}`, {
         headers: {
@@ -98,8 +96,6 @@ const Devices = () => {
       })
       .then((response) => {
         handleSuccessDelete();
-        
-
       })
       .catch((error) => {
         if (error.response && error.response.status === 422) {
@@ -202,7 +198,19 @@ const Devices = () => {
             </div>
           ))
         ) : (
-          <Typography variant="h4">No devices found.</Typography>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+  <div style={{ textAlign: 'center' }}>
+    <Typography variant="h4">No devices found.</Typography>
+    <Box m={2} />
+    <IconButton onClick={handleAddDeviceClick}>
+      <AddIcon fontSize="large" />
+      Add your first device
+    </IconButton>
+  </div>
+</div>
+
+
+
         )}
       </Box>
       {/* Wyświetlenie modalu, jeśli showDialog === true */}

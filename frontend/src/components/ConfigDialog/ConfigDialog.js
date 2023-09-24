@@ -109,13 +109,20 @@ const ConfigDialog = ({
 
   const handleUpdateDevice = (event) => {
     event.preventDefault();
+    console.log(configForm)
     axios
-      .post(`${URL}/devices/{device_id/update}`, configForm, {
+      .put(`${URL}/devices/update?device_id=${selectedDevice._id}`, configForm, {
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
         },
       })
+      .then((response) => {
+        // handleSuccessDialogOpen(true);
+        queryClient.invalidateQueries("devices");
+
+      })
+      
 
       .catch((error) => {
         if (error.response && error.response.status === 401) {

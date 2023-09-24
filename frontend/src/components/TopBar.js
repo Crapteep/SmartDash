@@ -32,24 +32,21 @@ export default function TopBar({
   onSelectionChange,
   isEditMode, // Receive isEditMode from props
   handleButtonClick,
-  devices,
-  selectedDeviceId,
-  setSelectedDeviceId
+  deviceList,
+  selectedDevice,
+  handleChangeDevice
 }) {
+
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const classes = useStyles();
 
   const handleDeviceSelect = (event) => {
-    setSelectedDeviceId(event.target.value);
-    console.log(event.target.value);
-
+    handleChangeDevice(event.target.value);
   };
 
-  // const handleButtonClick = () => {
-  //   onLayoutEdit(); // Call the handleButtonClick function from Content
-  // };
 
+  console.log('items w topbar', items)
   return (
     <Card
       className={classes.root}
@@ -72,12 +69,12 @@ export default function TopBar({
           alignItems: "center",
         }}
       >
-        {devices && !isEditMode && (
+        {deviceList && !isEditMode && (
           <List style={{ margin: 0, padding: 0 }}>
             <ListItem style={{ margin: 0, padding: 0 }}>
               <ListItemText style={{ fontSize: "12px", margin: 0, padding: 0 }}>
                 <Select
-                  value={selectedDeviceId}
+                  value={selectedDevice._id}
                   onChange={handleDeviceSelect}
                   displayEmpty
                   style={{
@@ -91,7 +88,7 @@ export default function TopBar({
                   <MenuItem style={{ fontSize: "12px" }} value="" disabled>
                     Select a device
                   </MenuItem>
-                  {devices.map((device) => (
+                  {deviceList.map((device) => (
                     <MenuItem key={device._id} value={device._id}>
                       {device.name}
                     </MenuItem>

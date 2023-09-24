@@ -35,7 +35,7 @@ export default function AddList({
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
-
+  console.log('items w addlist', items)
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };

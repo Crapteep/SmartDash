@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Responsive as ResponsiveGridLayout } from "react-grid-layout";
+import { Responsive, WidthProvider } from "react-grid-layout";
 import TopBar from "./TopBar";
 import Widget from "./Widget";
 import LineChart from "./LineChart";
@@ -10,7 +10,7 @@ import OutlinedButton from "./Buttons/OutlinedButton";
 import ContainedButton from "./Buttons/ContainedButton";
 
 const originalItems = ["a", "b", "c", "d", "e", "f"];
-
+const ResponsiveGridLayout = WidthProvider(Responsive);
 const initialLayouts = {
   lg: [
     {
@@ -203,7 +203,7 @@ const Content = ({
       />
       <ResponsiveGridLayout
         className="layout"
-        style={{border: "1px solid #ccc", borderRadius: "4px"}}
+        style={{ border: "1px solid #ccc", borderRadius: "4px" }}
         layout={layout}
         breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
         cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
@@ -223,6 +223,14 @@ const Content = ({
             const layoutItemMd =
               layout && layout.md
                 ? layout.md.find((item) => item.i === key)
+                : null;
+            const layoutItemSm =
+              layout && layout.sm
+                ? layout.sm.find((item) => item.i === key)
+                : null;
+                const layoutItemXs =
+              layout && layout.xs
+                ? layout.xs.find((item) => item.i === key)
                 : null;
             const defaultLayout = initialLayouts.lg.find(
               (item) => item.i === key
@@ -250,6 +258,28 @@ const Content = ({
                   minH: layoutItemMd.minH,
                   maxW: layoutItemMd.maxW,
                   maxH: layoutItemMd.maxH,
+                }
+              : layoutItemSm
+              ? {
+                  w: layoutItemSm.w,
+                  h: layoutItemSm.h,
+                  x: layoutItemSm.x,
+                  y: layoutItemSm.y,
+                  minW: layoutItemSm.minW,
+                  minH: layoutItemSm.minH,
+                  maxW: layoutItemSm.maxW,
+                  maxH: layoutItemSm.maxH,
+                }
+                : layoutItemXs
+              ? {
+                  w: layoutItemXs.w,
+                  h: layoutItemXs.h,
+                  x: layoutItemXs.x,
+                  y: layoutItemXs.y,
+                  minW: layoutItemXs.minW,
+                  minH: layoutItemXs.minH,
+                  maxW: layoutItemXs.maxW,
+                  maxH: layoutItemXs.maxH,
                 }
               : defaultLayout
               ? {

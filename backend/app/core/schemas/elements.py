@@ -20,4 +20,7 @@ class ElementCreate(BaseModel):
 
 class Element(ElementCreate):
     _id: str
-    
+
+
+class ElementResponse(Element):
+    pass

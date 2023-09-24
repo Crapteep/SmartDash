@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, constr
 from datetime import datetime
 
 
@@ -8,7 +8,8 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    password: str
+    password: constr(min_length=6, max_length=50, regex="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])")
+    created_at: datetime = datetime.now()
 
 
 class UserSettings(BaseModel):
@@ -16,14 +17,10 @@ class UserSettings(BaseModel):
     display_preferences: str | None = None
 
 
-class UserDashboard(BaseModel):
-    layout: str | None = None
-    elements: list[str] | None = None
-
-
 class User(UserBase):
     _id: str
     role: str = 'user'
     settings: UserSettings | None = None
-    dashboard: UserDashboard | None = None
     created_at: datetime = datetime.now()
+
+
