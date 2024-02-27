@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { sendData } from '../../redux/actions/buttonActions'
 
 
-export default function MyButton({ variant, text, backgroundColor, pin, uppercase=false }) {
+export default function MyButton({ variant, text, backgroundColor, pin, uppercase=false, isEditMode }) {
 
   
 const containerStyle = {
@@ -43,7 +43,7 @@ const handleButtonClick = () => {
   return (
     <div style={containerStyle}>
       <Tooltip title={text} enterDelay={500}>
-      <Button variant={variant} style={buttonStyle} onClick={handleButtonClick} fullWidth>
+      <Button variant={variant} style={buttonStyle} onClick={handleButtonClick} fullWidth disabled={isEditMode}>
         <Typography variant="h6" gutterBottom noWrap style={{ textTransform: uppercase ? 'uppercase' : 'none' }}>
          {text}
         </Typography>
