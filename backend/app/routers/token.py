@@ -23,6 +23,10 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
                             "WWW-Authenticate": "Bearer"})
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = auth_handler.create_acces_token(
-        data={"sub": user["username"]}, expires_delta=access_token_expires)
+    payload = {
+        "sub": user["username"],
+        "type": "user"
+    }
+    access_token = auth_handler.generate_user_token(
+        data=payload, expires_delta=access_token_expires)
     return {"access_token": access_token, "token_type": "bearer"}

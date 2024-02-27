@@ -1,18 +1,20 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
 from bson import ObjectId
+from .virtual_pins import VirtualPinBase
+from typing import Optional
 
 
 class DeviceConfiguration(BaseModel):
     serial_port: int
 
 class DeviceDashboard(BaseModel):
-    layout: dict | None = None
+    layout: list[dict] | None = None
     elements: list[str] | None = None
 
 class UpdateDashboard(BaseModel):
     device_id: str
-    layout: dict
+    layout: list[dict]
     elements: list[str] | None = None
 
 
@@ -22,6 +24,7 @@ class DeviceCreate(BaseModel):
     configuration: DeviceConfiguration
     dashboard: DeviceDashboard | None = None
     user_id: str | None = None
+    access_token: str | None = None
     created_at: datetime = datetime.now()
 
 class Device(DeviceCreate):

@@ -14,12 +14,15 @@ class ElementCreate(BaseModel):
     name: str
     type: str
     configuration: ElementConfiguration
-    user_id: str | None= None
+    user_id: str | None = None
     device_id: str
     created_at: datetime = datetime.now()
 
 class Element(ElementCreate):
     _id: str
+    
+    class Config:
+        orm_mode = True
 
 
 class ElementResponse(Element):

@@ -9,20 +9,15 @@ from dotenv import load_dotenv
 from fastapi import Depends, HTTPException
 from ..core.schemas.token import TokenData
 import os
-# from ..core.settings import Settings
 
-# print('settings',Settings.singleton())
-
-# settings = get_settings()
-# SECRET_KEY = settings.secret_key
-# ALGORITHM = settings.algorithm
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 load_dotenv()
 
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY_USER = os.getenv("SECRET_KEY_USER")
+SECRET_KEY_DEVICE = os.getenv("SECRET_KEY_DEVICE")
 ALGORITHM = os.getenv("ALGORITHM")
 
 def verify_password(plain_password, hashed_password):
@@ -42,7 +37,7 @@ async def authenticate_user(username, password):
     return user
 
 
-def create_acces_token(data: dict, expires_delta: timedelta | None = None):
+def generate_user_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -50,23 +45,50 @@ def create_acces_token(data: dict, expires_delta: timedelta | None = None):
         expire = datetime.utcnow() + timedelta(minutes=15)
 
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, key=SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, key=SECRET_KEY_USER, algorithm=ALGORITHM)
     return encoded_jwt
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+def generate_device_token(data: dict, expires_delta: timedelta | None = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(days=365)
+    
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, key=SECRET_KEY_DEVICE, algorithm=ALGORITHM)
+    return encoded_jwt
+
+
+async def verify_token(token: str, secret_key: str, data_key: str | None = None):
     credential_exception = HTTPException(status_code=401, detail="Could not validate credentials", headers={"WWW-Authenticate": "Bearer"})
+    
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
+        payload = jwt.decode(token, secret_key, algorithms=[ALGORITHM])
+        data = payload.get(data_key)
+        if data is None:
             raise credential_exception
-        
-        token_data = TokenData(username=username)
     except JWTError:
         raise credential_exception
     
-    user = await crud.User.get_by_username(username=token_data.username)
+    return data
+
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    username = await verify_token(token, SECRET_KEY_USER, "sub")
+    user = await crud.User.get_by_username(username=username)
     if user is None:
-        raise credential_exception
+        raise HTTPException(status_code=401, detail="User not found")
     return user
+
+
+async def get_current_device(token: str):
+    device_id = await verify_token(token, SECRET_KEY_DEVICE, "device_id")
+    
+    device = await crud.Device.device_exists(device_id)
+    if not device:
+        raise HTTPException(status_code=401, detail="Device not found")
+    return device
+
+

@@ -17,6 +17,7 @@ class VirtualPinBase(BaseModel):
     name: str
     pin: constr(min_length=2, max_length=4, regex=r'^V(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')
     data_type: str
+    value: int = 0
 
 
 class VirtualPinIntegerCreate(VirtualPinBase):
