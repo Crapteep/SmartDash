@@ -41,7 +41,8 @@ const buttonSettings = {
   variant: "outlined",
   text: "Click me",
   backgroundColor: "",
-  pin: 0,
+  pins: {},
+  value: NaN
 }
 
 const initialLayoutDefaults = {

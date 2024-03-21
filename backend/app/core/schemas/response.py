@@ -6,6 +6,7 @@ class ResponseModel(BaseModel):
 
 
 class RecivedData(BaseModel):
-    topic: str
+    code: int
     pin: int
-    data: Any
+    value: Any | None = None
+    property: str | None = None

@@ -19,6 +19,7 @@ database = client.SmartDash
 users_collection = database.users
 devices_collection = database.devices
 elements_collection = database.elements
+virtual_pins_collection = database.virtual_pins
 logger = logging.getLogger(__name__)
 
 
@@ -152,6 +153,42 @@ class Device(BaseCollection):
             return True
         else:
             return False
+        
+    @classmethod
+    async def get_virtual_pin_value(cls, device_id: str, pin: int):
+        document = await cls.collection.find_one({"_id": device_id})
+
+        if document:
+            if "dashboard" in document and "layout" in document["dashboard"]:
+                layout = document["dashboard"]["layout"]
+                for obj in layout:
+                    if "settings" in obj and "pins" in obj["settings"] and pin in obj["settings"]["pins"]:
+                        pin_value = obj["settings"]["pins"][pin]["data"]
+                        return pin_value
+        return None
+
+
+    @classmethod
+    async def set_virtual_pin_value(cls, device_id: str, pin: int, new_value: int | str | float):
+
+        document = await cls.collection.find_one({"_id": device_id})
+
+        if document and "dashboard" in document and "layout" in document["dashboard"]:
+            layout = document["dashboard"]["layout"]
+            for obj in layout:
+                if "settings" in obj and "pins" in obj["settings"]:
+                    pins = obj["settings"]["pins"]
+                    for pin_key, pin_value in pins.items():
+                        if pin_key == pin:
+                            pin_value["data"] = new_value
+                            await cls.collection.update_one(
+                                {"_id": device_id, "dashboard.layout.instanceId": obj["instanceId"]},
+                                {"$set": {f"dashboard.layout.$[element].settings.pins.{pin_key}.value": new_value}},
+                                array_filters=[{"element.i": obj["i"]}]
+                            )
+                            return True
+        return False
+
 
 
 class Element(BaseCollection):

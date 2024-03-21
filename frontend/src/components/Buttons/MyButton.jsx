@@ -31,9 +31,9 @@ const dispatch = useDispatch();
 
 const handleButtonClick = () => {
   const dataToSend = {
-    topic: 'write',
+    code: 1,
     pin: pin,
-    data: 1
+    value: 1
   };
   console.log('klikam w przycisk oraz dane:', dataToSend)
   dispatch(sendData(dataToSend));
