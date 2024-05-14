@@ -1,11 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, Path
+from fastapi import APIRouter, Depends, HTTPException
 from ..auth import auth_handler
 from ..core.schemas import users, devices, response
 from ..core.models import crud
 from ..core.utils.validators import Validator
 from bson import ObjectId
 from datetime import timedelta
-from ..core.utils.helpers import check_exists
 
 router = APIRouter(
     prefix="/devices",
@@ -22,19 +21,27 @@ async def get_devices(current_user: users.User = Depends(auth_handler.get_curren
     return {"message": "There are no devices yet!"}
 
 
-@router.get('/{device_id}', response_model=devices.DeviceResponse, description="Fetch specific device")
-async def get_device(device_id: str = Depends(Validator.is_valid_object_id),
+@router.get('/{id_}', description="Fetch specific device")
+async def get_device(id_: str = Depends(Validator.is_valid_object_id),
                     current_user: users.User = Depends(auth_handler.get_current_user)):
 
-    device = await check_exists(current_user["_id"], device_id, "device")
-    return devices.DeviceResponse(**device)
+    device = await crud.Device.get_device(current_user["_id"], id_)
+    device.pop("layout")
+    device.pop("user_id")
+    device.pop("_id")
+    virtual_pins = await crud.Pin.get_virtual_pins_by_device_id(id_)
+    
+    for pin in virtual_pins:
+        pin['min'] = pin.pop('min_range')
+        pin['max'] = pin.pop('max_range')
+
+    return {"settings": device, "virtual_pins": virtual_pins}
 
 
 @router.post('/create', response_model=response.ResponseModel, description="Create new device")
 async def create_new_device(device: devices.DeviceCreate, current_user: users.User = Depends(auth_handler.get_current_user)):
     user_id = current_user["_id"]
     device.user_id = user_id
-    device.dashboard = devices.DeviceDashboard()
     response = await crud.Device.create(device.dict())
     if not response:
         raise HTTPException(500, detail="Failed to create new device.")
@@ -48,17 +55,21 @@ async def create_new_device(device: devices.DeviceCreate, current_user: users.Us
     return {"message": "Device has been created!"}
     
     
-@router.delete('/delete', response_model=response.ResponseModel, description="Delete exists device") #dodać usuwanie dashboardu przypisanego do tego urządzenia
-async def delete_device(device_id: str = Depends(Validator.is_valid_object_id), current_user: users.User = Depends(auth_handler.get_current_user)):
-    response = await crud.Device.delete(device_id, current_user["_id"])
+@router.delete('/delete/{id_}', response_model=response.ResponseModel, description="Delete exists device")
+async def delete_device(id_: str = Depends(Validator.is_valid_object_id), current_user: users.User = Depends(auth_handler.get_current_user)):
+    response = await crud.Device.delete(filter_fields= {"_id": ObjectId(id_), "user_id": ObjectId(current_user["_id"])})
     if response:
+        await crud.Element.delete(filter_fields={"device_id": ObjectId(id_)}, delete_many=True)
+        await crud.Pin.delete(filter_fields={"device_id": ObjectId(id_)}, delete_many=True)
+        await crud.Trigger.delete(filter_fields={"device_id": ObjectId(id_)}, delete_many=True)
+        await crud.DataArchive.delete(filter_fields={"device_id": ObjectId(id_)}, delete_many=True)
         return {"message": "Device has been deleted!"}
     raise HTTPException(404, detail="Devices not found!")
 
 
-@router.put('/update', response_model=response.ResponseModel, description="Update specific device")
-async def update_device(*, device_id: str = Depends(Validator.is_valid_object_id), update_data: devices.DeviceUpdate, current_user: users.User = Depends(auth_handler.get_current_user)):
-    response = await crud.Device.update(device_id, current_user["_id"], update_data.dict())
+@router.put('/update/{id_}', response_model=response.ResponseModel, description="Update specific device")
+async def update_device(*, id_: str = Depends(Validator.is_valid_object_id), update_data: devices.DeviceUpdate, current_user: users.User = Depends(auth_handler.get_current_user)):
+    response = await crud.Device.update(id_, current_user["_id"], update_data.dict())
     if response:
         return {"message": "Device has been updated!"}
     raise HTTPException(404, detail="Devices not found!")
