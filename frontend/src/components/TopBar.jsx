@@ -16,7 +16,6 @@ import SaveIcon from "@mui/icons-material/Save";
 import EditIcon from "@mui/icons-material/Edit";
 import AddList from "./AddList";
 
-
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: theme.spacing(1),
@@ -25,19 +24,19 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "flex-end",
   },
 }));
- const TopBar = ({
+const TopBar = ({
   deviceList,
   selectedDevice,
   setLayout,
   layout,
-  originalItems, 
+  elements,
+  setElements,
+  originalItems,
   isEditMode,
   handleButtonClick,
-  
-  
-  handleChangeDevice
-}) =>{
 
+  handleChangeDevice,
+}) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const classes = useStyles();
@@ -45,7 +44,6 @@ const useStyles = makeStyles((theme) => ({
   const handleDeviceSelect = (event) => {
     handleChangeDevice(event.target.value);
   };
-
 
   return (
     <Card
@@ -56,8 +54,9 @@ const useStyles = makeStyles((theme) => ({
         <AddList
           setLayout={setLayout}
           layout={layout}
+          elements={elements}
+          setElements={setElements}
           originalItems={originalItems}
-          
         />
       ) : null}
 
@@ -98,32 +97,33 @@ const useStyles = makeStyles((theme) => ({
           </List>
         )}
 
-        
         <div style={{ marginLeft: "auto" }}>
-          <Tooltip title={isEditMode ? "Save dashboard" : "Edit dashboard"} enterDelay={500}>
-          <IconButton
-            aria-label= {isEditMode ? "save": "edit"}
-            onClick={handleButtonClick}
-            style={{
-              padding: "2px",
-              width: "32px",
-              height: "32px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+          <Tooltip
+            title={isEditMode ? "Save dashboard" : "Edit dashboard"}
+            enterDelay={500}
           >
-            {isEditMode ? (
-              <SaveIcon style={{ fontSize: "20px" }} />
-            ) : (
-              <EditIcon style={{ fontSize: "20px" }} />
-            )}
-          </IconButton>
+            <IconButton
+              aria-label={isEditMode ? "save" : "edit"}
+              onClick={handleButtonClick}
+              style={{
+                padding: "2px",
+                width: "32px",
+                height: "32px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {isEditMode ? (
+                <SaveIcon style={{ fontSize: "20px" }} />
+              ) : (
+                <EditIcon style={{ fontSize: "20px" }} />
+              )}
+            </IconButton>
           </Tooltip>
         </div>
-        
       </div>
     </Card>
   );
-}
-export default TopBar
+};
+export default TopBar;

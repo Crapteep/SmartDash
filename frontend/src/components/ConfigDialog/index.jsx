@@ -29,6 +29,8 @@ const ConfigDialog = ({
     selectedDevice.configuration
   );
 
+  const [deviceDescription, setDeviceDescription] = useState(selectedDevice.description);
+
   const queryClient = useQueryClient();
 
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -79,8 +81,9 @@ const ConfigDialog = ({
       name: deviceName,
       hardware: deviceHardware,
       configuration: deviceConfiguration,
+      description: deviceDescription
     });
-  }, [deviceName, deviceHardware, deviceConfiguration]);
+  }, [deviceName, deviceHardware, deviceConfiguration, deviceDescription]);
 
 
   const handleCreateDevice = (event) => {
@@ -110,7 +113,7 @@ const ConfigDialog = ({
     event.preventDefault();
     console.log(configForm)
     axios
-      .put(`${URL}/devices/update?device_id=${selectedDevice._id}`, configForm, {
+      .put(`${URL}/devices/update/${selectedDevice._id}`, configForm, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -160,9 +163,9 @@ const ConfigDialog = ({
               value={deviceHardware}
               onChange={(event) => setDeviceHardware(event.target.value)}
             >
-              <MenuItem value="Arduino">Arduino</MenuItem>
+              <MenuItem value="arduino">Arduino</MenuItem>
               <MenuItem value="esp32">ESP32</MenuItem>
-              <MenuItem value="raspberry pi">Raspberry Pi</MenuItem>
+              <MenuItem value="rpi">Raspberry Pi</MenuItem>
             </Select>
           </FormControl>
 
@@ -179,6 +182,16 @@ const ConfigDialog = ({
                 serial_port: parseInt(event.target.value, 10),
               })
             }
+          />
+
+      <TextField
+            fullWidth
+            label="Description"
+            placeholder="Device description here.."
+            variant="outlined"
+            margin="normal"
+            value={deviceDescription}
+            onChange={(event) => setDeviceDescription(event.target.value)}
           />
 
           <DialogActions>

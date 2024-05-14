@@ -4,112 +4,99 @@ import { Responsive, WidthProvider } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import Widget from "./Widget";
-import Chart from "./LineChart";
-import AreaChart from "./AreaChart";
-import BarChart from "./BarChart";
-import ScatterChart from "./ScatterChart";
-import OutlinedButton from "./Buttons/OutlinedButton";
-import MyButton from "./Buttons/MyButton";
+import Chart from "./elements/charts/Chart";
+import MyButton from "./elements/buttons/MyButton";
 import TopBar from "./TopBar";
-
-
+import MySwitch from "./elements/buttons/MySwitch";
+import MyLabel from "./elements/labels/MyLabel";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-const originalItems = ["a", "b", "c", "d", "e", "f"];
+const originalItems = ["a", "b", "c", "d"];
 
 const componentList = {
   a: Chart,
-  b: AreaChart,
-  c: BarChart,
-  d: ScatterChart,
-  e: OutlinedButton,
-  f: MyButton,
+  b: MyButton,
+  c: MySwitch,
+  d: MyLabel,
 };
 
-
-
+let count = 0;
 const DropDrag = ({
   props,
   layout,
   setLayout,
+  elements,
+  setElements,
   deviceList,
   selectedDevice,
-
   handleUpdateLayout,
   handleChangeDevice,
 }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isDraggable, setIsDraggable] = useState(false);
-  const URL = import.meta.env.VITE_APP_API_URL;
 
+  count++;
+  console.log("Aktualizacja DragDrop: ", count);
 
   const handleButtonClick = () => {
-    console.log("handlebuttonclick");
     if (isEditMode) {
       onLayoutSave();
     }
     setIsEditMode((prevEditMode) => !prevEditMode);
-    setIsDraggable((prevDraggable) => !prevDraggable)
+    setIsDraggable((prevDraggable) => !prevDraggable);
   };
 
   const onLayoutChange = (new_layout, layouts) => {
     if (isEditMode) {
-      const updatedLayout = layout.map(originalLayoutItem => {
-        const newLayoutItem = new_layout.find(item => item.i === originalLayoutItem.instanceId);
+      const updatedLayout = layout.map((originalLayoutItem) => {
+        const newLayoutItem = new_layout.find(
+          (item) => item.i === originalLayoutItem.element_id
+        );
         if (newLayoutItem) {
           return {
             ...newLayoutItem,
             i: originalLayoutItem.i,
-            instanceId: originalLayoutItem.instanceId,
-            settings: originalLayoutItem.settings
+            element_id: originalLayoutItem.element_id,
           };
         }
         return originalLayoutItem;
       });
       setLayout(updatedLayout);
-      console.log('po update: ', updatedLayout);
     }
   };
-  
-  
 
   const onLayoutSave = () => {
     handleUpdateLayout();
   };
 
   const onRemoveItem = (itemId) => {
-    const updatedLayout = layout.filter(item => item.instanceId !== itemId);
+    const updatedLayout = layout.filter((item) => item.element_id !== itemId);
     setLayout(updatedLayout);
+
+    const updatedElements = elements.filter(
+      (element) => element.element_id !== itemId
+    );
+    setElements(updatedElements);
   };
 
-  const onUpdateSettings = (newSettings, instanceId) => {
-    console.log(instanceId, newSettings)
-    const updatedLayout = layout.map(item => {
-      if (item.instanceId === instanceId) {
-        return { ...item, settings: newSettings };
+  const onUpdateSettings = (newSettings, id) => {
+    const updatedElements = elements.map((element) => {
+      if (element.element_id === id) {
+        return newSettings;
       }
-      return item;
+      return element;
     });
 
-    setLayout(updatedLayout);
-  }
-
-  const handleTestButtonClick = () => {
-    console.log(
-      "layout ->",
-      layout,
-      selectedDevice
-    );
-    console.log('url', URL)
-  
+    setElements(updatedElements);
   };
 
   return (
     <>
-      {/* <button onClick={handleTestButtonClick}>test</button> */}
       <TopBar
         layout={layout}
         setLayout={setLayout}
+        elements={elements}
+        setElements={setElements}
         originalItems={originalItems}
         isEditMode={isEditMode}
         handleButtonClick={handleButtonClick}
@@ -126,21 +113,24 @@ const DropDrag = ({
           rowHeight={30}
           breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
           measureBeforeMount={false}
-          // useCSSTransforms={mounted}
           onLayoutChange={onLayoutChange}
           isDroppable={true}
           isDraggable={isDraggable}
           isResizable={isEditMode}
+          compactType={null}
+          preventCollision
         >
-           {layout && layout.length > 0 ? (
+          {layout && layout.length > 0 ? (
             layout.map((item, index) => {
               return (
-                <div key={item.instanceId} data-grid={item}>
+                <div key={item.element_id} data-grid={item}>
                   <Widget
-                    id={item.instanceId}
+                    id={item.element_id}
                     onRemoveItem={onRemoveItem}
                     component={componentList[item.i]}
-                    settings={item.settings}
+                    element={elements.find(
+                      (element) => element.element_id === item.element_id
+                    )}
                     isEditMode={isEditMode}
                     setIsDraggable={setIsDraggable}
                     windowHeight={window.innerHeight}
@@ -152,10 +142,7 @@ const DropDrag = ({
             })
           ) : (
             <p>No items in layout</p>
-)}
-
-
-
+          )}
         </ResponsiveReactGridLayout>
       </div>
     </>

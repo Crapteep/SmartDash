@@ -8,8 +8,7 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import Button from "@mui/material/Button";
-import { v4 as uuidv4 } from 'uuid';
-
+import { v4 as uuidv4 } from "uuid";
 
 const useStyles = makeStyles((theme) => ({
   popup: {
@@ -18,32 +17,64 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const widgetNames = {
-  a: "Line Chart",
-  b: "Area Chart",
-  c: "Bar Chart",
-  d: "Scatter Chart",
-  e: "Outlined Button",
-  f: "Contained Button",
+  a: "Chart",
+  b: "Button",
+  c: "Switch",
+  d: "Label",
 };
 
 const chartSettings = {
-  type: "chart",
-  widgetTitle: "Chart",
+  element_type: "chart",
+  widget_title: "Chart",
+  alias: "",
+  chart_type: "line:linear",
   xAxisLabel: "X Axis",
   yAxisLabel: "Y Axis",
-  pins: {},
-  showLegend: false
-}
+  virtual_pins: [],
+  show_legend: false,
+  selected_range: "1d",
+  xunit: "",
+  yunit: "",
+};
 
 const buttonSettings = {
-  type: "button",
-  widgetTitle: "Button",
+  element_type: "button",
+  widget_title: "Button",
+  alias: "",
   variant: "outlined",
   text: "Click me",
-  backgroundColor: "",
-  pins: {},
-  value: NaN
-}
+  background_color: "",
+  on_click_value: 0,
+  virtual_pins: [],
+};
+
+const switchSettings = {
+  element_type: "switch",
+  widget_title: "Switch",
+  alias: "",
+  on_label: "ON",
+  off_label: "OFF",
+  label_position: "end",
+  on_value: 1,
+  off_value: 0,
+  checked: false,
+  virtual_pins: [],
+  show_label: false,
+};
+
+const labelSettings = {
+  element_type: "label",
+  widget_title: "Label",
+  alias: "",
+  level_color: "#5353ec",
+  label_position: "center",
+  level_position: "vertical",
+  unit: "",
+  min_level: 0,
+  max_level: 1,
+  show_level: false,
+  virtual_pins: [],
+};
 
 const initialLayoutDefaults = {
   chart: {
@@ -70,25 +101,46 @@ const initialLayoutDefaults = {
     moved: false,
     static: false,
   },
+  switch: {
+    w: 4,
+    h: 4,
+    x: 0,
+    y: 0,
+    minW: 3,
+    minH: 4,
+    maxW: 24,
+    maxH: 6,
+    moved: false,
+    static: false,
+  },
+  label: {
+    w: 4,
+    h: 3,
+    x: 0,
+    y: 0,
+    minW: 3,
+    minH: 3,
+    maxW: 24,
+    maxH: 24,
+    moved: false,
+    static: false,
+  },
 };
 
 const widgetSettings = {
-  a: { ...chartSettings},
-  b: { ...chartSettings},
-  c: { ...chartSettings},
-  d: { ...chartSettings},
-  e: { ...buttonSettings},
-  f: { ...buttonSettings},
-}
-
+  a: { ...chartSettings },
+  b: { ...buttonSettings },
+  c: { ...switchSettings },
+  d: { ...labelSettings },
+};
 
 const AddList = ({
   originalItems,
   setLayout,
   layout,
+  elements,
+  setElements,
 }) => {
-
-  
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -103,49 +155,53 @@ const AddList = ({
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
-
-
-
   const handleAddComponentToLayout = (elementName) => {
-    const instanceId = generateUniqueId();
-    console.log('ELEMENT NAME', elementName)
+    const element_id = generateUniqueId();
     const newLayout = {
-      ...initialLayoutDefaults[widgetSettings[elementName].type],
+      ...initialLayoutDefaults[widgetSettings[elementName].element_type],
       i: elementName,
-      instanceId: instanceId,
-      settings: widgetSettings[elementName],
-    }
+      element_id: element_id,
+    };
+    const newElement = {
+      ...widgetSettings[elementName],
+      element_id: element_id,
+    };
+
     setLayout((prevLayout) => [...prevLayout, newLayout]);
-    console.log('przed dodaniem', newLayout)
+    setElements((prevElements) => [...prevElements, newElement]);
   };
 
-  const generateUniqueId = () => {
-    let newInstanceId;
+  const generateUniqueId = (layout) => {
+    if (!layout) {
+      return uuidv4();
+    }
+
+    let element_id;
     do {
-      newInstanceId = uuidv4();
-    } while (layout.some(item => item.instanceId === newInstanceId));
-    return newInstanceId;
+      element_id = uuidv4();
+    } while (layout.some((item) => item.element_id === element_id));
+
+    return element_id;
   };
 
   return (
     <>
-    <Tooltip title="Add new widget" enterDelay={500}>
-      <IconButton
-        aria-label="add"
-        onClick={handleClick}
-        aria-describedby={id}
-        style={{
-          padding: "2px",
-          width: "32px",
-          height: "32px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        
-        <AddCircleOutlineIcon style={{ fontSize: "20px" }} />
-      </IconButton>
+      <Tooltip title="Add new widget" enterDelay={500}>
+        <IconButton
+          aria-label="add"
+          onClick={handleClick}
+          aria-describedby={id}
+          style={{
+            padding: "2px",
+            width: "32px",
+            height: "32px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <AddCircleOutlineIcon style={{ fontSize: "20px" }} />
+        </IconButton>
       </Tooltip>
       <Popover
         id={id}
@@ -165,7 +221,7 @@ const AddList = ({
           <FormControl component="fieldset">
             <FormLabel component="legend">Select Widgets</FormLabel>
             <FormGroup>
-            {originalItems.map((i) => (
+              {originalItems.map((i) => (
                 <Button
                   key={i}
                   className={classes.button}
@@ -181,5 +237,5 @@ const AddList = ({
       </Popover>
     </>
   );
-}
+};
 export default AddList;

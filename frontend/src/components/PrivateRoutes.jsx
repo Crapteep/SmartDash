@@ -1,43 +1,55 @@
-import { Outlet, Navigate } from 'react-router-dom';
+import { Outlet, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from 'axios';
+import axios from "axios";
+import { useUser } from "../providers/UserProvider";
 
-const PrivateRoutes = () => {
+const PrivateRoutes = ({ setIsLoggedIn }) => {
+  const { setUser } = useUser();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const URL = import.meta.env.VITE_APP_API_URL;
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
 
     if (token) {
-      console.log(localStorage.getItem('token'));
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      axios.get(`${URL}/users/me`)
-        .then(response => {
+      axios
+        .get(`${URL}/users/me`)
+        .then((response) => {
+          setUser(response.data);
           setIsAuthenticated(true);
           setIsLoading(false);
         })
-        .catch(error => {
-          if (error.response && error.response.status === 401 && error.response.data.detail === "Token wygasł") {
-            axios.post(`${URL}/refresh_token/`, { token: token })
-              .then(response => {
+        .catch((error) => {
+          if (
+            error.response &&
+            error.response.status === 401 &&
+            error.response.data.detail === "Token wygasł"
+          ) {
+            axios
+              .post(`${URL}/refresh_token/`, { token: token })
+              .then((response) => {
                 const newToken = response.data.access_token;
-                localStorage.setItem('token', newToken);
-                axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+                localStorage.setItem("token", newToken);
+                axios.defaults.headers.common[
+                  "Authorization"
+                ] = `Bearer ${newToken}`;
                 setIsAuthenticated(true);
                 setIsLoading(false);
               })
-              .catch(refreshError => {
-                localStorage.removeItem('token');
+              .catch((refreshError) => {
+                localStorage.removeItem("token");
                 setIsAuthenticated(false);
+                setIsLoggedIn(false);
                 setIsLoading(false);
               });
           } else {
-            localStorage.removeItem('token');
+            localStorage.removeItem("token");
             setIsAuthenticated(false);
+            setIsLoggedIn(false);
             setIsLoading(false);
           }
         });
@@ -45,15 +57,13 @@ const PrivateRoutes = () => {
       setIsAuthenticated(false);
       setIsLoading(false);
     }
-  }, [URL]);
+  }, [URL, setIsLoggedIn, setUser]);
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  return (
-    isAuthenticated ? <Outlet /> : <Navigate to="/login" />
-  );
-}
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
+};
 
 export default PrivateRoutes;
