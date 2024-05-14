@@ -3,11 +3,13 @@ import axios from "axios";
 
 const URL = import.meta.env.VITE_APP_API_URL;
 
-const useDeviceData = (deviceId) => {
+const useUsedPinsData = (deviceId) => {
   return useQuery({
-    queryKey: ["device", deviceId],
+    queryKey: ["used-pins", deviceId],
     queryFn: async () => {
-      const { data } = await axios.get(`${URL}/devices/${deviceId}`);
+      const { data } = await axios.get(
+        `${URL}/virtual-pins/${deviceId}/used-pins`
+      );
       return data;
     },
     refetchIntervalInBackground: false,
@@ -15,4 +17,4 @@ const useDeviceData = (deviceId) => {
   });
 };
 
-export default useDeviceData;
+export default useUsedPinsData;
