@@ -1,10 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import users, token, signup, devices, elements, dashboard, websocket
-
-from .core import settings
-
-# settings = Settings.get()
+from .routers import archive_data, users, token, signup, devices, elements, dashboard, websocket, virtual_pins, triggers
+from .core.utils.helpers import Manager
 
 
 app = FastAPI()
@@ -15,18 +12,16 @@ app.include_router(devices.router)
 app.include_router(elements.router)
 app.include_router(dashboard.router)
 app.include_router(websocket.router)
+app.include_router(virtual_pins.router)
+app.include_router(triggers.router)
+app.include_router(archive_data.router)
+
+
+manager = Manager()
 
 origins = [
     "http://localhost:5173",
     "http://localhost:8000",
-    "http://192.168.0.102:3000",
-    "http://192.168.0.103:8000",
-    "http://192.168.0.103:5173",
-    "http://192.168.0.101:5173",
-    "http://192.168.0.101:8000",
-    "http://192.168.0.106:5173",
-    "http://192.168.0.106:8000",
-
 ]
 
 
@@ -38,6 +33,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get('/')
+
+@app.get("/")
 async def root():
-    return {'message': 'Hello!'}
+    return {"Hello": "World"}
