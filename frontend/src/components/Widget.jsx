@@ -192,7 +192,15 @@ export default function Widget({
                 </IconButton>
               </Tooltip>
             </>
-          ) : null}
+          ) : (
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <Typography variant="h6" gutterBottom noWrap>
+                {element?.virtual_pins[0]?.pin
+                  ? `(${element.virtual_pins[0].pin})`
+                  : ""}
+              </Typography>
+            </div>
+          )}
         </div>
         <div className={classes.body}>
           <Item
