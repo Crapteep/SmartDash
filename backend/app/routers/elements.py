@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, Path
+from fastapi import APIRouter, Depends, HTTPException, Query, Path, status
 from ..auth import auth_handler
 from ..core.schemas import users, elements, virtual_pins
 from ..core.utils.validators import Validator
@@ -26,10 +26,10 @@ async def get_elements(current_user: users.User = Depends(auth_handler.get_curre
     return {"message": "There are no elements yet!"}
 
 
-@router.get('/{device_id}')
-async def get_device_elements(device_id: str = Depends(Validator.is_valid_object_id), current_user: users.User = Depends(auth_handler.get_current_user)):
-    await check_exists(current_user["_id"], device_id, "device")
-    response = await crud.Element.get_device_elements(current_user["_id"], device_id)
+@router.get('/{id_}')
+async def get_device_elements(id_: str = Depends(Validator.is_valid_object_id), current_user: users.User = Depends(auth_handler.get_current_user)):
+    await check_exists(current_user["_id"], id_, "device-id")
+    response = await crud.Element.get_device_elements(current_user["_id"], id_)
 
     if response:
         return response
@@ -39,7 +39,7 @@ async def get_device_elements(device_id: str = Depends(Validator.is_valid_object
 async def create_element(element: elements.ElementCreate, current_user: users.User = Depends(auth_handler.get_current_user)):
     Validator.is_valid_object_id(element.device_id)
 
-    await check_exists(current_user["_id"], element.device_id, "device")
+    await check_exists(current_user["_id"], element.device_id, "device-id")
     
     element.user_id = current_user["_id"]
     element.device_id = ObjectId(element.device_id)
@@ -50,75 +50,34 @@ async def create_element(element: elements.ElementCreate, current_user: users.Us
     
 
 
-@router.delete('/delete', description="Delete exists element")
-async def delete_element(element_id: str = Depends(Validator.is_valid_object_id),
+@router.delete('/delete/{id_}', description="Delete exists element")
+async def delete_element(id_: str = Depends(Validator.is_valid_object_id),
                         current_user: users.User = Depends(auth_handler.get_current_user)):
-    await check_exists(current_user["_id"], element_id, "element")
+    await check_exists(current_user["_id"], id_, "element-id")
 
-    element_deleted = await crud.Element.delete(element_id, current_user["_id"])
+    element_deleted = await crud.Element.delete({"_id": ObjectId(id_), "user_id": ObjectId(current_user["_id"])})
     if not element_deleted:
         raise HTTPException(500, detail=ErrorMessages.DeleteFailed)
     return {"message": "Element has been deleted!"}
     
 
-@router.post('/{element_id}/virtual_pin/create')
-async def create_virtual_pin(*, element_id: str = Depends(Validator.is_valid_object_id),
-                             pin_data: virtual_pins.VirtualPinIntegerCreate | virtual_pins.VirtualPinStringCreate,
+@router.patch('/{id_}')
+async def update_element(*,
+                             id_: str = Depends(Validator.is_valid_object_id),
+                             update_data: elements.UpdateChartField,
                              current_user: users.User = Depends(auth_handler.get_current_user)):
 
-    element = await check_exists(current_user["_id"], element_id, "element")
+    element_exists = await check_exists(current_user["_id"], id_, "element-id")
+    if update_data.field not in element_exists:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=f"Invalid field '{update_data.field}'. Valid fields are: {list(elements.ChartCreate.__fields__.keys())}")
     
-    virtual_pin = element.get("virtual_pin", None)
-    if virtual_pin is not None:
-        raise HTTPException(409, detail=ErrorMessages.VirtualPinAssignedToElement)
+    field_type = elements.ChartCreate.__annotations__.get(update_data.field)
 
-    elements = await crud.Element.get_device_elements(current_user["_id"], element["device_id"])
-    for item in elements:
-        if "virtual_pin" in item:
-            if item['virtual_pin']['pin'] == pin_data.pin:
-                raise HTTPException(409, detail=ErrorMessages.VirtualPinExists)
-
-    response = await crud.Element.update(element_id, current_user["_id"], {"virtual_pin": pin_data.dict()})
+    if type(update_data.value) != field_type:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Invalid value type")
+    
+    response = await crud.Element.update(id_, current_user["_id"], {update_data.field: update_data.value})
     if not response:
-        raise HTTPException(500, detail=ErrorMessages.CreateFailed)
-   
-    return {"message": "Virtual Pin has been successfully added!"}
+        raise HTTPException(status_code=status.HTTP_200_OK, detail=f"Element with ID: {id_} has not been updated") 
 
-
-
-@router.delete('/{element_id}/virtual_pin/delete/')
-async def delete_virtual_pin(element_id: str = Depends(Validator.is_valid_object_id),
-                             current_user: users.User = Depends(auth_handler.get_current_user)):
-
-    element = await check_exists(current_user["_id"], element_id, "element")
-
-    if "virtual_pin" not in element:
-        raise HTTPException(409, detail=ErrorMessages.ElementWithoutVirtualPin)
-    del element["virtual_pin"]
-  
-    element = convert_fields_to_objectid(element)
-    response = await crud.Element.update(element_id, current_user["_id"], element, replace=True)
-    if not response:
-        raise HTTPException(500, detail=ErrorMessages.DeleteFailed)
-    return {"message": "Virtual pin has been deleted!"}
-    
-
-# @router.update('/{element_id}/virtual_pin/update/{pin}')
-# async def update_virtual_pin(element_id: str = Depends(Validator.is_valid_object_id),
-#                              pin: str = Depends(Validator.is_valid_pin),
-#                              current_user: users.User = Depends(auth_handler.get_current_user)):
-    
-#     element = await crud.Element.get_element(current_user["_id"], element_id)
-#     if not element:
-#         raise HTTPException(404, detail=ErrorMessages.ElementNotFound)
-
-#     if "virtual_pin" not in element:
-#         raise HTTPException(409, detail=ErrorMessages.ElementWithoutVirtualPin)
-    
-#     # element["virtual_pin"] = 
-
-# @router.update('/{element_id}/virtual_pin/update/{pin}')
-# async def update_virtual_pin_object(element_id: str = Depends(Validator.is_valid_object_id),
-#                              pin: virtual_pins.VirtualPinIntegerCreate | virtual_pins.VirtualPinStringCreate,
-#                              current_user: users.User = Depends(auth_handler.get_current_user)):
-    
+    return {"message": "Element has been updated!"}
