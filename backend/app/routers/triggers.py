@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks, Query, Path
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from ..auth import auth_handler
 from ..core.schemas import triggers
 from ..core.utils.validators import Validator
@@ -7,7 +7,7 @@ from ..core.utils.helpers import check_exists
 from bson import ObjectId
 from .. import main
 from ..core.workers.tasks import run_trigger
-from typing import Annotated
+
 
 
 

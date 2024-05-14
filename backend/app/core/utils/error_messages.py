@@ -6,6 +6,7 @@ class ErrorMessages:
     ElementNotFound = "Element with this ID does not exist"
     ElementCreationFailed = "Failed to create the element!"
     VirtualPinExists = "This virtual pin already exist!"
+    VirtualPinNotExists = "This virtual pin not exist!"
     VirtualPinAssignedToElement = "This element already has a virtual pin assigned to it"
     InvalidPinFormat = "Invalid PIN format. Pin must be in the format 'V0' to 'V255'."
     ElementWithoutVirtualPin = "This element does not have a virtual pin yet!"

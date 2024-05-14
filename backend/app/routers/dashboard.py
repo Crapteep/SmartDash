@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Path, status
 from ..auth import auth_handler
-from ..core.schemas import devices, users, elements, archive_data
+from ..core.schemas import devices, users, archive_data
 from ..core.utils.validators import Validator
 from ..core.utils.error_messages import ErrorMessages
 from ..core.models import crud

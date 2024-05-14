@@ -45,7 +45,6 @@ async def delete_virtual_pins(*,
                               id_: str = Depends(Validator.is_valid_object_id),
                               deleted_ids: list[str],
                               current_user: users.User = Depends(auth_handler.get_current_user)):
-    print(deleted_ids)
     for pin_id in deleted_ids:
         Validator.is_valid_object_id(pin_id)
         

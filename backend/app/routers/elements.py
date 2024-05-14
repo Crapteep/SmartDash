@@ -1,13 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, Path, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from ..auth import auth_handler
-from ..core.schemas import users, elements, virtual_pins
+from ..core.schemas import users, elements
 from ..core.utils.validators import Validator
 from ..core.utils.error_messages import ErrorMessages
 from ..core.models import crud
 from bson import ObjectId
-from bson.errors import InvalidId
 from typing import Annotated
-from ..core.utils.helpers import convert_fields_to_objectid, check_exists
+from ..core.utils.helpers import check_exists
 
 
 

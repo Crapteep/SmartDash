@@ -1,15 +1,9 @@
 from fastapi import APIRouter, Depends
-
-
-import os
-from dotenv import load_dotenv
-
 from ..core.schemas import users
 from ..auth import auth_handler
 from ..core.settings import Settings
 
 settings = Settings.get()
-
 
 
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
