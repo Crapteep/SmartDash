@@ -1,7 +1,7 @@
 // reducers/chartReducer.js
 
 const initialState = {
-    sendData: null, // Inicjalizuj sendData
+    sendData: null,
   };
   
   const buttonReducer = (state = initialState, action) => {

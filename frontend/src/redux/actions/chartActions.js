@@ -1,8 +1,8 @@
 // actions.js
 
-export const updatePinData = (pinNumber, newData, interval) => ({
+export const updatePinData = (pinNumber, newData, timestamp) => ({
   type: 'UPDATE_PIN_DATA',
-  payload: { pinNumber, newData, interval },
+  payload: { pinNumber, newData, timestamp },
 });
 
 

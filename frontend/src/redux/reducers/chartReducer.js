@@ -1,17 +1,17 @@
 // reducers.js
 
 const initialState = {
-  pinsData: {}, // Obiekt przechowujący dane dla każdego pinu
+  pinsData: {},
   hasNewData: {},
 };
 
 const chartReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'UPDATE_PIN_DATA':
-      const { pinNumber, newData, interval } = action.payload;
+      const { pinNumber, newData, timestamp } = action.payload;
       const updatedPinData = {
-        data: newData,
-        interval: interval,
+        value: newData,
+        timestamp: timestamp,
       };
       const updatedPinsData = {
         ...state.pinsData,
