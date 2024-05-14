@@ -1,16 +1,21 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Box, Button, Typography, useTheme } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
 import useDevicesData from "../../hooks/useDevicesData";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import DragDrop from "../../components/DragDrop";
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from "react-redux";
 import { updatePinData } from "../../redux/actions/chartActions";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { clearSendData } from"../../redux/actions/buttonActions"
+import {
+  updateLabelValue,
+  resetLabelState,
+} from "../../redux/actions/labelActions";
+import { useWebSocket } from "../../hooks/useWebSocket";
+import { WebSocketProvider } from "../../providers/WebSocketProvider";
 
+let count = 0;
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -19,12 +24,73 @@ const Dashboard = () => {
   const { isLoading, data: deviceList } = useDevicesData();
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [layout, setLayout] = useState([]);
-  const [copied, setCopied] = useState(false);
-
+  const [elements, setElements] = useState([]);
+  const [usedPins, setUsedPins] = useState({});
   const dispatch = useDispatch();
-  const sendData = useSelector(state => state.button.sendData);
   const [token, setToken] = useState("");
-  const ws = useRef(null);
+
+  count++;
+  console.log("Aktualizacja dashboard: ", count);
+
+  async function handleData(data) {
+    if (Array.isArray(data)) {
+      for (const item of data) {
+        await handleSingleData(item);
+      }
+    } else {
+      await handleSingleData(data);
+    }
+  }
+
+  async function handleSingleData(data) {
+    console.log(data);
+    const { code, pin, timestamp, value } = data;
+
+    const reducers = [];
+    if (usedPins) {
+      for (const [reducer, pins] of Object.entries(usedPins)) {
+        if (pins && pins.includes(pin)) {
+          reducers.push(reducer);
+        }
+      }
+    } else {
+      console.error("usedPins is undefined or null");
+      return;
+    }
+
+    if (reducers.length === 0) {
+      console.log(`Pin ${pin} nie istnieje w usedPins.`);
+      return;
+    }
+
+    for (const reducerName of reducers) {
+      switch (reducerName) {
+        case "chart":
+          console.log("aktualizuje wykres");
+          await dispatch(updatePinData(pin, value, timestamp));
+          break;
+        case "label":
+          console.log("aktualizuje label");
+          await dispatch(updateLabelValue(pin, value));
+          break;
+        case "button":
+          console.log("aktualizuje button");
+          break;
+        case "switch":
+          console.log("aktualizuje switch");
+          break;
+        case "slider":
+          //  kod dla akcji 'slider'
+          break;
+        case "diode":
+          //  kod dla akcji 'diode'
+          break;
+        default:
+          console.log(`Nieznany reducer: ${reducerName}`);
+          break;
+      }
+    }
+  }
 
   useEffect(() => {
     if (!isLoading && deviceList && deviceList.length > 0) {
@@ -47,50 +113,55 @@ const Dashboard = () => {
     }
   }, [deviceList, isLoading]);
 
-  useEffect(() => {
-    if (token !== "") {
-      const URLWithoutProtocol = URL.replace(/^https?:\/\//, "");
-      ws.current = new WebSocket(`ws://${URLWithoutProtocol}/ws/?token=${token}`);
-
-      ws.current.onopen = () => {
-        console.log("WebSocket connected");
-      };
-
-      ws.current.onmessage = (event) => {
-        const newData = JSON.parse(event.data);
-        dispatch(updatePinData(newData.pin, newData.data, newData.interval));
-      };
-
-      return () => {
-        ws.current.close();
-      };
-    }
-  }, [token]);
-
-  useEffect(() => {
-    if (sendData) {
-      console.log('wysyłam dane', sendData)
-      ws.current.send(JSON.stringify(sendData));
-      dispatch(clearSendData());
-    }
-  }, [sendData]);
-
-
-  
-
-  {
-    /*Update layoutu w bazie danych*/
-  }
   const handleUpdateLayout = async () => {
-    console.log("layout przed update", layout);
+    const updatedElements = elements.map((element) => {
+      const transformedVirtualPins = element.virtual_pins.map((pin) => pin.pin);
+      return {
+        ...element,
+        virtual_pins: transformedVirtualPins,
+      };
+    });
+
     const update_data = {
       device_id: selectedDevice._id,
       layout: layout,
+      elements: updatedElements,
     };
 
     try {
       const response = await axios.put(`${URL}/dashboard/update`, update_data);
-      console.log("Response:", response.data);
+      fetchDeviceLayout(selectedDevice._id);
+      fetchUsedPinsData(selectedDevice._id);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  function processResponseData(response) {
+    if (response.data !== null) {
+      if (response.data.layout !== null) {
+        setLayout(response.data.layout);
+      } else {
+        setLayout([]);
+      }
+
+      if (response.data.elements !== null) {
+        setElements(response.data.elements);
+      } else {
+        setElements([]);
+      }
+    } else {
+      setLayout([]);
+      setElements([]);
+    }
+  }
+
+  const fetchUsedPinsData = async (deviceId) => {
+    try {
+      const response = await axios.get(
+        `${URL}/virtual-pins/${deviceId}/used-pins`
+      );
+      setUsedPins(response.data);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -99,28 +170,23 @@ const Dashboard = () => {
   const fetchDeviceLayout = async (deviceId) => {
     try {
       const response = await axios.get(`${URL}/dashboard/${deviceId}`);
-      console.log("Odopowiedz serwera", response.data);
-      if (response.data !== null) {
-        setLayout(response.data);
-      } else {
-        setLayout([]);
-      }
-      console.log("po ustawieniu z serwera", response.data);
+      processResponseData(response);
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
-  {
-    /*Funckja ustawiająca nowe urządzenie*/
-  }
   const handleChangeDevice = (deviceId) => {
+    setUsedPins({});
+    dispatch(resetLabelState());
     const newSelectedDevice = findDeviceById(deviceList, deviceId);
     setSelectedDevice(newSelectedDevice);
+
+    fetchUsedPinsData(newSelectedDevice._id);
     setToken(newSelectedDevice.access_token);
     fetchDeviceLayout(deviceId);
+
     localStorage.setItem("selected_device", JSON.stringify(newSelectedDevice));
-    console.log(selectedDevice);
   };
 
   function findDeviceById(deviceList, deviceId) {
@@ -128,60 +194,36 @@ const Dashboard = () => {
     return foundDevice || null;
   }
 
-
-  const handleCopyClick = () => {
-
-  }
-
+  const { sendData } = useWebSocket(handleData, token, usedPins);
   return (
-    <Box m="20px">
-      {/* HEADER */}
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
-      </Box>
-      <Box display="flex" justifyContent="flex-start">
-        <CopyToClipboard text={selectedDevice && selectedDevice.access_token}>
-          <Button
-            variant="outlined"
-            style={{ background: colors.primary[400] }}
-            onClick={() => {
-              setCopied(true);
-              setTimeout(() => {
-                setCopied(false);
-              }, 1000);
-            }}
-          >
-            <Typography
-              variant="h6"
-              gutterBottom
-              noWrap
-              style={{ textTransform: "none" }}
-            >
-              Copy device acces token
-            </Typography>
-          </Button>
-        </CopyToClipboard>
-        {copied ? <Typography style={{ marginLeft: 10, marginTop: 10}}>Copied!</Typography> : null}
-      </Box>
+    <WebSocketProvider sendData={sendData}>
+      <Box m="20px">
+        {/* HEADER */}
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
+        </Box>
 
-      <Box my={1} />
-      <Box maxWidth="100%" overflow="hidden">
-        {isLoading ? (
-          <CircularProgress />
-        ) : deviceList && deviceList.length > 0 && selectedDevice ? (
-          <DragDrop
-            layout={layout}
-            setLayout={setLayout}
-            deviceList={deviceList}
-            selectedDevice={selectedDevice}
-            handleUpdateLayout={handleUpdateLayout}
-            handleChangeDevice={handleChangeDevice}
-          />
-        ) : (
-          <Typography>No devices found. </Typography>
-        )}
+        <Box my={1} />
+        <Box maxWidth="100%" overflow="hidden">
+          {isLoading ? (
+            <CircularProgress />
+          ) : deviceList && deviceList.length > 0 && selectedDevice ? (
+            <DragDrop
+              layout={layout}
+              setLayout={setLayout}
+              elements={elements}
+              setElements={setElements}
+              deviceList={deviceList}
+              selectedDevice={selectedDevice}
+              handleUpdateLayout={handleUpdateLayout}
+              handleChangeDevice={handleChangeDevice}
+            />
+          ) : (
+            <Typography>No devices found. </Typography>
+          )}
+        </Box>
       </Box>
-    </Box>
+    </WebSocketProvider>
   );
 };
 

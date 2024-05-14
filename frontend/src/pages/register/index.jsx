@@ -24,7 +24,6 @@ import {
   DialogActions,
 } from "@mui/material";
 
-
 const defaultTheme = createTheme();
 
 export default function Register() {
@@ -39,26 +38,24 @@ export default function Register() {
   });
 
   const handleSubmit = (e) => {
-    console.log(formData);
     e.preventDefault();
-      axios
-        .post(`${URL}/signup/`, {
-          ...formData,
-        })
-        .then((response) => {
-          setRedirectToLogin(true);
-          setOpenDialog(true);
-          resetForm();
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 409) {
-            setEmailDisplayError(error.response.data.detail);
-          }
-          if (error.response && error.response.status === 422) {
-            setEmailDisplayError("Please enter the correct email or password.");
-          }
-        });
-      console.log(formData);
+    axios
+      .post(`${URL}/signup/`, {
+        ...formData,
+      })
+      .then((response) => {
+        setRedirectToLogin(true);
+        setOpenDialog(true);
+        resetForm();
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 409) {
+          setEmailDisplayError(error.response.data.detail);
+        }
+        if (error.response && error.response.status === 422) {
+          setEmailDisplayError("Please enter the correct email or password.");
+        }
+      });
   };
 
   const handleDialogClose = () => {

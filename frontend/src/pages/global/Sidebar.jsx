@@ -7,10 +7,9 @@ import { tokens } from "../../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-import PhonelinkOutlinedIcon from '@mui/icons-material/PhonelinkOutlined';
-import logo from '../../assets/user.png'
-import Tooltip from "@mui/material/Tooltip";
-
+import PhonelinkOutlinedIcon from "@mui/icons-material/PhonelinkOutlined";
+import logo from "../../assets/user.png";
+import { useUser } from "../../providers/UserProvider";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -32,6 +31,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
 
 const Sidebar = () => {
   const theme = useTheme();
+  const { user } = useUser();
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
@@ -50,16 +50,16 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
-    const localStorageState = localStorage.getItem('sidebarCollapsed');
-    setIsCollapsed(localStorageState === 'true' ? true : false);
-    window.addEventListener('resize', handleResize);
+    const localStorageState = localStorage.getItem("sidebarCollapsed");
+    setIsCollapsed(localStorageState === "true" ? true : false);
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('sidebarCollapsed', isCollapsed);
+    localStorage.setItem("sidebarCollapsed", isCollapsed);
   }, [isCollapsed]);
 
   return (
@@ -101,7 +101,7 @@ const Sidebar = () => {
                 ml="15px"
               >
                 <Typography variant="h3" color={colors.grey[100]}>
-                  ADMINIS
+                  PANEL
                 </Typography>
                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
                   <MenuOutlinedIcon />
@@ -128,17 +128,18 @@ const Sidebar = () => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  Michał
+                  {user && user.username && user.username}
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
-                  Admin
+                  {user &&
+                    user.role &&
+                    user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                 </Typography>
               </Box>
             </Box>
           )}
 
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
-    
             <Item
               title="Dashboard"
               to="/"
@@ -161,7 +162,7 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-            
+
             <Item
               title="FAQ Page"
               to="/faq"
@@ -170,13 +171,13 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
 
-            <Item
+            {/* <Item
               title="Test"
               to="/test"
               icon={<HelpOutlineOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            />
+            /> */}
           </Box>
         </Menu>
       </ProSidebar>

@@ -12,11 +12,13 @@ import ConfirmationDialog from "../../components/ConfirmDialogForms/Confirmation
 import { useQueryClient } from "react-query";
 import axios from "axios";
 import InfoDialog from "../../components/ConfirmDialogForms/InfoDialog";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
+import { Link } from "react-router-dom";
+import HeaderInfo from "../../components/HeaderInfo";
 
 const Devices = () => {
   const URL = import.meta.env.VITE_APP_API_URL;
-  const bearerToken = localStorage.getItem("token")
+  const bearerToken = localStorage.getItem("token");
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const queryClient = useQueryClient();
@@ -35,6 +37,7 @@ const Devices = () => {
     configuration: {
       serial_port: "",
     },
+    description: "",
   };
 
   const [dialogMessage, setDialogMessage] = useState({
@@ -44,7 +47,6 @@ const Devices = () => {
 
   const handleConfigureClick = (device) => {
     setIsConfiguration(true);
-    console.log(device);
     setSelectedDevice(device);
     setShowDialog(true);
   };
@@ -57,7 +59,6 @@ const Devices = () => {
     setIsConfiguration(false);
     setSelectedDevice(formDevice);
     setShowDialog(true);
-    console.log("dodaj urządzenie");
   };
 
   const handleDeleteClick = (device_id) => {
@@ -81,15 +82,14 @@ const Devices = () => {
   const handleErrorDelete = () => {
     setDialogMessage({
       title: "Error!",
-      message: "The device has not been removed!", 
+      message: "The device has not been removed!",
     });
     setShowInfoDialog(true);
   };
 
   const handleConfirm = () => {
-    console.log(removalDevice);
     axios
-      .delete(`${URL}/devices/delete?id=${removalDevice}`, {
+      .delete(`${URL}/devices/delete/${removalDevice}`, {
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${bearerToken}`,
@@ -100,9 +100,9 @@ const Devices = () => {
       })
       .catch((error) => {
         if (error.response && error.response.status === 422) {
-          console.log(error.response.detail);
+          pass;
         } else if (error.response.status === 401) {
-          console.log(error.response.detail);
+          pass;
         }
         handleErrorDelete();
       });
@@ -113,25 +113,19 @@ const Devices = () => {
   const handleCancel = () => {
     setShowConfirmDialog(false);
   };
-
+  console.log("laduje");
   if (isLoading) {
     return <Box>ładowanie</Box>;
   }
   return (
     <Box m="20px">
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="space-between"
-        mb="40px"
-      >
-        <Header title="DEVICES" subtitle="Configure your devices" />
+      <HeaderInfo title="DEVICES" subtitle="Configure your devices">
         <Tooltip title={<Typography variant="h6">Add device</Typography>}>
           <IconButton onClick={handleAddDeviceClick} className="btn">
             <ControlPointIcon />
           </IconButton>
         </Tooltip>
-      </Box>
+      </HeaderInfo>
 
       <Box
         display="flex"
@@ -142,75 +136,62 @@ const Devices = () => {
       >
         {data && data.length > 0 ? (
           data?.map((device) => (
-            <div class="card" key={device.id}>
-              <div class="content">
-                <Tooltip
-                  title={
-                    device.name.length > 18 ? (
-                      <Typography variant="h6">{device.name}</Typography>
-                    ) : null
-                  }
-                  placement="top"
-                >
+            <Link
+              to={`/devices/${device._id}`}
+              key={device._id}
+              style={{ textDecoration: "none" }}
+            >
+              <div className="card" key={device._id}>
+                <div className="content">
+                  <Tooltip
+                    title={
+                      device.name.length > 18 ? (
+                        <Typography variant="h6">{device.name}</Typography>
+                      ) : null
+                    }
+                    placement="top"
+                  >
+                    <Typography
+                      variant="h3"
+                      color={colors.grey[100]}
+                      fontWeight="bold"
+                      sx={{
+                        m: "10px 0 0 0",
+                        maxWidth: "100%",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {device.name}
+                    </Typography>
+                  </Tooltip>
                   <Typography
-                    variant="h3"
-                    color={colors.grey[100]}
-                    fontWeight="bold"
+                    color={colors.grey[200]}
+                    className="description"
                     sx={{
-                      m: "10px 0 0 0",
-                      maxWidth: "100%",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      cursor: "pointer",
                     }}
                   >
-                    {device.name}
+                    {device.description}
                   </Typography>
-                </Tooltip>
-                <Typography
-                  color={colors.grey[200]}
-                  className="description"
-                  sx={{
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Modi
-                  laboriosam at voluptas minus culpa deserunt delectus sapiente
-                  inventore pariatur
-                </Typography>
-                <div className="button-group">
-                  <Button
-                    onClick={() => handleConfigureClick(device)}
-                    className="btn"
-                  >
-                    Configure
-                  </Button>
-                  <Button
-                    onClick={() => handleDeleteClick(device._id)}
-                    className="btn"
-                  >
-                    Delete
-                  </Button>
                 </div>
               </div>
-            </div>
+            </Link>
           ))
         ) : (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-  <div style={{ textAlign: 'center' }}>
-    <Typography variant="h4">No devices found.</Typography>
-    <Box m={2} />
-    <IconButton onClick={handleAddDeviceClick}>
-      <AddIcon fontSize="large" />
-      Add your first device
-    </IconButton>
-  </div>
-</div>
-
-
-
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <div style={{ textAlign: "center" }}>
+              <Typography variant="h4">No devices found.</Typography>
+              <Box m={2} />
+              <IconButton onClick={handleAddDeviceClick}>
+                <AddIcon fontSize="large" />
+                Add your first device
+              </IconButton>
+            </div>
+          </div>
         )}
       </Box>
       {showDialog && (

@@ -16,10 +16,9 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
 
-
 const defaultTheme = createTheme();
 
-export default function Login() {
+export default function Login({ setIsLoggedIn }) {
   const URL = import.meta.env.VITE_APP_API_URL;
   const [redirectToDashboard, setRedirectToDashboard] = useState(false);
   const [loginDisplayError, setLoginDisplayError] = useState("");
@@ -29,27 +28,26 @@ export default function Login() {
   });
 
   const handleSubmit = (e) => {
-    console.log(formData);
     e.preventDefault();
-    
-      axios
-        .post(`${URL}/token/`, formData, {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        })
-        .then((response) => {
-          localStorage.setItem("token", response.data.access_token);
-          setRedirectToDashboard(true);
-          resetForm();
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 401) {
-            setLoginDisplayError(error.response.data.detail);
-          }
-        });
-    
+
+    axios
+      .post(`${URL}/token/`, formData, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      })
+      .then((response) => {
+        localStorage.setItem("token", response.data.access_token);
+        setRedirectToDashboard(true);
+        setIsLoggedIn(true);
+        resetForm();
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 401) {
+          setLoginDisplayError(error.response.data.detail);
+        }
+      });
   };
 
   const resetForm = () => {
@@ -102,10 +100,12 @@ export default function Login() {
             >
               <Box>
                 {/* Display information */}
-                {loginDisplayError && (
+                {loginDisplayError ? (
                   <Typography variant="body1" color="error" gutterBottom>
                     {loginDisplayError}
                   </Typography>
+                ) : (
+                  <div style={{ height: 30 }} />
                 )}
               </Box>
               <TextField
