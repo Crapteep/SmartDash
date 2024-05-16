@@ -96,18 +96,18 @@ async def get_used_pins(id_: str = Depends(Validator.is_valid_object_id),
     
     elements = await crud.Element.get_device_elements(current_user["_id"], id_)
 
-    if not elements:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    
-    result = {
-        "chart": [],
-        "label": [],
-        "button": [],
-        "switch": [],
-        "slider": [],
-        "diode": []
-    }
 
+    result = {
+            "chart": [],
+            "label": [],
+            "button": [],
+            "switch": [],
+            "slider": [],
+            "diode": []
+        }
+    if not elements:
+        return result
+    
     for element in elements:
 
         element_type = element.get("element_type")
