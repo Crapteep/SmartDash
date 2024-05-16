@@ -12,7 +12,6 @@ import FAQ from "./pages/faq";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import Devices from "./pages/devices";
-import Datastream from "./pages/datastream";
 import Login from "./pages/login";
 import Register from "./pages/register";
 import PrivateRoutes from "./components/PrivateRoutes";
@@ -20,7 +19,7 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 import Settings from "./pages/settings/Settings";
 import { UserProvider } from "./providers/UserProvider";
-import Test from "./pages/test";
+
 
 
 function App() {
@@ -57,7 +56,6 @@ function App() {
                     <Route path="/devices" element={<Devices />} />
                     <Route path="/devices/:id" element={<Settings />} />
                     <Route path="/faq" element={<FAQ />} />
-                    {/* <Route path="/test" element={<Test />} /> */}
                   </Route>
                   <Route
                     path="/login"
