@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     secret_key_user: str | None = None
     secret_key_device: str | None = None
     algorithm: str | None = None
+    client_url: str | None = None
 
     class Config:
         env_file = ".env"

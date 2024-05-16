@@ -2,6 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import archive_data, users, token, signup, devices, elements, dashboard, websocket, virtual_pins, triggers
 from .core.utils.helpers import Manager
+from .core.settings import Settings
+
+settings = Settings.get()
 
 
 app = FastAPI()
@@ -20,15 +23,7 @@ app.include_router(archive_data.router)
 manager = Manager()
 
 origins = [
-    "http://localhost:5173",
-    "http://localhost:8000",
-    "http://192.168.0.102:3000",
-    "http://192.168.0.103:8000",
-    "http://192.168.0.103:5173",
-    "http://192.168.0.101:5173",
-    "http://192.168.0.101:8000",
-    "http://192.168.0.106:5173",
-    "http://192.168.0.106:8000",
+   settings.client_url
 ]
 
 
