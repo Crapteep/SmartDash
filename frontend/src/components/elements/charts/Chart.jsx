@@ -152,17 +152,17 @@ function MyChart({
       setData([...data, dataPoint]);
     }
 
-    let newStartIndex = zoomState.startIndex;
-    if (zoomState.startIndex !== 0) {
-      newStartIndex += 1;
-    }
+    // let newStartIndex = zoomState.startIndex;
+    // if (zoomState.startIndex !== 0) {
+    //   newStartIndex += 1;
+    // }
 
-    const newState = {
-      startIndex: newStartIndex,
-      endIndex: zoomState.endIndex + 1,
-    };
-    localStorage.setItem("zoomState", JSON.stringify(newState));
-    setZoomState(newState);
+    // const newState = {
+    //   startIndex: newStartIndex,
+    //   endIndex: zoomState.endIndex + 1,
+    // };
+    // localStorage.setItem("zoomState", JSON.stringify(newState));
+    // setZoomState(newState);
   };
 
   if (isEditMode) {
@@ -253,21 +253,21 @@ function MyChart({
               <Brush
                 dataKey="index"
                 height={20}
-                startIndex={
-                  zoomState &&
-                  zoomState.startIndex !== undefined &&
-                  zoomState.startIndex < data?.length
-                    ? zoomState.startIndex
-                    : NaN
-                }
-                endIndex={
-                  zoomState &&
-                  zoomState.endIndex !== undefined &&
-                  zoomState.endIndex < data?.length &&
-                  zoomState.endIndex >= zoomState.startIndex
-                    ? zoomState.endIndex
-                    : NaN
-                }
+                // startIndex={
+                //   zoomState &&
+                //   zoomState.startIndex !== undefined &&
+                //   zoomState.startIndex < data?.length
+                //     ? zoomState.startIndex
+                //     : NaN
+                // }
+                // endIndex={
+                //   zoomState &&
+                //   zoomState.endIndex !== undefined &&
+                //   zoomState.endIndex < data?.length &&
+                //   zoomState.endIndex >= zoomState.startIndex
+                //     ? zoomState.endIndex
+                //     : NaN
+                // }
                 onChange={(e) => handleBrushChange(e)}
               />
             </LineChart>
@@ -319,21 +319,21 @@ function MyChart({
               <Brush
                 dataKey="index"
                 height={20}
-                startIndex={
-                  zoomState &&
-                  zoomState.startIndex !== undefined &&
-                  zoomState.startIndex < data?.length
-                    ? zoomState.startIndex
-                    : NaN
-                }
-                endIndex={
-                  zoomState &&
-                  zoomState.endIndex !== undefined &&
-                  zoomState.endIndex < data?.length &&
-                  zoomState.endIndex >= zoomState.startIndex
-                    ? zoomState.endIndex
-                    : NaN
-                }
+                // startIndex={
+                //   zoomState &&
+                //   zoomState.startIndex !== undefined &&
+                //   zoomState.startIndex < data?.length
+                //     ? zoomState.startIndex
+                //     : NaN
+                // }
+                // endIndex={
+                //   zoomState &&
+                //   zoomState.endIndex !== undefined &&
+                //   zoomState.endIndex < data?.length &&
+                //   zoomState.endIndex >= zoomState.startIndex
+                //     ? zoomState.endIndex
+                //     : NaN
+                // }
                 onChange={(e) => handleBrushChange(e)}
               />
             </BarChart>
@@ -393,21 +393,21 @@ function MyChart({
               <Brush
                 dataKey="index"
                 height={20}
-                startIndex={
-                  zoomState &&
-                  zoomState.startIndex !== undefined &&
-                  zoomState.startIndex < data?.length
-                    ? zoomState.startIndex
-                    : NaN
-                }
-                endIndex={
-                  zoomState &&
-                  zoomState.endIndex !== undefined &&
-                  zoomState.endIndex < data?.length &&
-                  zoomState.endIndex >= zoomState.startIndex
-                    ? zoomState.endIndex
-                    : NaN
-                }
+                // startIndex={
+                //   zoomState &&
+                //   zoomState.startIndex !== undefined &&
+                //   zoomState.startIndex < data?.length
+                //     ? zoomState.startIndex
+                //     : NaN
+                // }
+                // endIndex={
+                //   zoomState &&
+                //   zoomState.endIndex !== undefined &&
+                //   zoomState.endIndex < data?.length &&
+                //   zoomState.endIndex >= zoomState.startIndex
+                //     ? zoomState.endIndex
+                //     : NaN
+                // }
                 onChange={(e) => handleBrushChange(e)}
               />
             </AreaChart>
@@ -459,21 +459,21 @@ function MyChart({
               <Brush
                 dataKey="index"
                 height={20}
-                startIndex={
-                  zoomState &&
-                  zoomState.startIndex !== undefined &&
-                  zoomState.startIndex < data?.length
-                    ? zoomState.startIndex
-                    : NaN
-                }
-                endIndex={
-                  zoomState &&
-                  zoomState.endIndex !== undefined &&
-                  zoomState.endIndex < data?.length &&
-                  zoomState.endIndex >= zoomState.startIndex
-                    ? zoomState.endIndex
-                    : NaN
-                }
+                // startIndex={
+                //   zoomState &&
+                //   zoomState.startIndex !== undefined &&
+                //   zoomState.startIndex < data?.length
+                //     ? zoomState.startIndex
+                //     : NaN
+                // }
+                // endIndex={
+                //   zoomState &&
+                //   zoomState.endIndex !== undefined &&
+                //   zoomState.endIndex < data?.length &&
+                //   zoomState.endIndex >= zoomState.startIndex
+                //     ? zoomState.endIndex
+                //     : NaN
+                // }
                 onChange={(e) => handleBrushChange(e)}
               />
             </ScatterChart>
