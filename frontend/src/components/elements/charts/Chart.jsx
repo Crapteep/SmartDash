@@ -186,6 +186,7 @@ function MyChart({
 
       handleBrushChange({ startIndex: NaN, endIndex: NaN });
       updateSelectedRange(timeAgo);
+      handleChange("selected_range", timeAgo);
     }
   };
 
