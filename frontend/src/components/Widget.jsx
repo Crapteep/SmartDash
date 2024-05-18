@@ -97,11 +97,16 @@ export default function Widget({
   };
 
   const handleChange = (name, value) => {
-    setFormData({
-      ...formData,
-      [name]: value,
+    setFormData((prevFormData) => {
+      const updatedFormData = {
+        ...prevFormData,
+        [name]: value,
+      };
+      onUpdateSettings(updatedFormData, id);
+      return updatedFormData;
     });
   };
+  
 
   const handleCloseDialog = () => {
     setOpen(false);
