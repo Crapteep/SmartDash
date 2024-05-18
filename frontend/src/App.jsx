@@ -19,7 +19,7 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 import Settings from "./pages/settings/Settings";
 import { UserProvider } from "./providers/UserProvider";
-
+import PageNotFound from "./pages/error/PageNotFound"
 
 
 function App() {
@@ -56,12 +56,14 @@ function App() {
                     <Route path="/devices" element={<Devices />} />
                     <Route path="/devices/:id" element={<Settings />} />
                     <Route path="/faq" element={<FAQ />} />
+                    
                   </Route>
                   <Route
                     path="/login"
                     element={<Login setIsLoggedIn={setIsLoggedIn} />}
                   />
                   <Route path="/register" element={<Register />} />
+                  <Route path="*" element={<PageNotFound/>} />
                 </Routes>
               </main>
             </div>
