@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Tooltip from "@mui/material/Tooltip";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
@@ -87,6 +87,8 @@ export default function MyLabel({
 }) {
   const [pin, setPin] = useState(virtual_pins?.[0]?.pin || null);
   const [value, setValue] = useState(virtual_pins?.[0]?.value || 0);
+  const [fontSize, setFontSize] = useState("3em");
+  const containerRef = useRef(null);
 
   const calculateFillPercentage = () => {
     const range = max_level - min_level;
@@ -95,16 +97,7 @@ export default function MyLabel({
     return `${(normalizedValue / range) * 100}%`;
   };
 
-  const labelStyle = {
-    fontSize: "3em",
-    textTransform: uppercase ? "uppercase" : "none",
-    color:
-      show_level === false
-        ? "primary"
-        : getContrastColor(level_color || "#0c66ee"),
-    position: "relative",
-    zIndex: 1,
-  };
+  
 
   const alignStyle = {
     left: "flex-start",
@@ -142,8 +135,37 @@ export default function MyLabel({
     }
   }, [labelData]);
 
+  useEffect(() => {
+    const container = containerRef.current;
+
+    if (container) {
+      const resizeObserver = new ResizeObserver(() => {
+        const { offsetHeight } = container;
+        setFontSize(`${offsetHeight * 0.35}px`);
+      });
+
+      resizeObserver.observe(container);
+
+      return () => {
+        resizeObserver.disconnect();
+      };
+    }
+  }, []);
+
+  const labelStyle = {
+    fontSize: fontSize,
+    textTransform: uppercase ? "uppercase" : "none",
+    color:
+      show_level === false
+        ? "primary"
+        : getContrastColor(level_color || "#0c66ee"),
+    position: "relative",
+    zIndex: 1,
+  };
+
   return (
     <div
+      ref={containerRef}
       style={{
         display: "flex",
         justifyContent: alignStyle[label_position],
