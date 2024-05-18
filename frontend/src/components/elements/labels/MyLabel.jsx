@@ -137,11 +137,10 @@ export default function MyLabel({
 
   useEffect(() => {
     const container = containerRef.current;
-
     if (container) {
       const resizeObserver = new ResizeObserver(() => {
         const { offsetHeight } = container;
-        setFontSize(`${offsetHeight * 0.35}px`);
+        setFontSize(`${Math.sqrt(offsetHeight) * 5}px`);
       });
 
       resizeObserver.observe(container);
