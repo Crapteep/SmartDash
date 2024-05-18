@@ -23,6 +23,7 @@ const Topbar = ({ setIsLoggedIn }) => {
     axios.defaults.headers.common["Authorization"] = ``;
     navigate("/login");
     setIsLoggedIn(false);
+    localStorage.clear();
   };
   const handlePersonIconClick = (event) => {
     setAnchorEl(event.currentTarget);
