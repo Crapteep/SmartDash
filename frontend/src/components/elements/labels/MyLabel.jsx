@@ -80,6 +80,7 @@ export default function MyLabel({
   max_level,
   level_position,
   show_level,
+  show_label,
   level_color,
   virtual_pins,
   unit,
@@ -216,6 +217,7 @@ export default function MyLabel({
         </div>
       )}
 
+      {show_label && (
       <Tooltip title={value} enterDelay={500}>
         <FormControl
           component="fieldset"
@@ -233,6 +235,7 @@ export default function MyLabel({
           </FormLabel>
         </FormControl>
       </Tooltip>
+      )}
     </div>
   );
 }
