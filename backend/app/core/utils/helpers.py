@@ -12,6 +12,7 @@ from .validators import Validator
 import time
 from functools import wraps
 from collections import defaultdict
+from websockets.exceptions import ConnectionClosedError
 
 CACHE_DURATION = 5
 
@@ -38,7 +39,7 @@ class ConnectionManager:
 
     async def connect(self, websocket: WebSocket, client_id: str, device_id: str):
         await websocket.accept()
-
+        print('Lista tasków', self.task_manager.tasks)
         if device_id not in self.active_connections:
             self.active_connections[device_id] = {}
             await self.task_manager.add_task(self.process_data_buffer_loop, self.process_data_buffer_loop.__name__, device_id, client_id)
@@ -67,7 +68,8 @@ class ConnectionManager:
             if not self.active_connections[device_id]:
                 await self.task_manager.remove_tasks(device_id)
                 del self.active_connections[device_id]
-               
+            
+            print('Lista tasków', self.task_manager.tasks)
         else:
             raise HTTPException(404, detail="Connection not found")
                 
@@ -194,22 +196,29 @@ class ConnectionManager:
     async def process_data_buffer_loop(self, device_id: str, client_id: str, interval_seconds: float = 0.1):
         save_counter = 0
         save_interval = 10
-        try:
-            while True:
-                await asyncio.sleep(interval_seconds)
-                await self.process_data_buffer(device_id, client_id)
+        while True:
+                try:
+                    while True:
+                        await asyncio.sleep(interval_seconds)
+                        await self.process_data_buffer(device_id, client_id)
 
-                save_counter += interval_seconds
-                if save_counter >= save_interval:
+                        save_counter += interval_seconds
+                        if save_counter >= save_interval:
+                            await self.save_to_database(device_id)
+                            save_counter = 0
+
+                except ConnectionClosedError as e:
+                    await asyncio.sleep(1)
+                except Exception as e:
+                    await asyncio.sleep(1)
+
+                finally:
                     await self.save_to_database(device_id)
-                    save_counter = 0
-            
-        finally:
-            await self.save_to_database(device_id)
         
 
     async def save_to_database(self, device_id: str):
         if device_id in self.archive_data and self.archive_data[device_id]:
+            print('zapisuje do bazy')
             asyncio.create_task(crud.DataArchive.save_archive_data(device_id, self.archive_data[device_id]))
             latest_data = []
             for data in self.archive_data[device_id]:
