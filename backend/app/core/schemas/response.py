@@ -1,5 +1,5 @@
 from pydantic import BaseModel, constr, validator
-from typing import Any, Union
+from typing import Union
 import re
 
 

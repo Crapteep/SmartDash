@@ -1,6 +1,5 @@
-from pydantic import BaseModel, constr, validator
+from pydantic import BaseModel
 from datetime import datetime
-from pydantic import Field
 from typing import Union
 from fastapi import HTTPException, status
 
@@ -70,7 +69,13 @@ class LabelCreate(ElementCreateBase):
     label_position: str
     level_position: str
     unit: str
-    
+
+
+class SliderCreate(ElementCreateBase):
+    send_immediately: bool
+    step: Union[float, int]
+
+
 
 class UpdateChartField(BaseModel):
     field: str 

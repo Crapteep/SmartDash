@@ -1,10 +1,6 @@
 from pydantic import BaseModel, Field, validator
 from datetime import datetime
-from bson import ObjectId
-# from .virtual_pins import VirtualPinBase
-from .elements import ButtonCreate, ChartCreate, SwitchCreate, LabelCreate
-from typing import Optional
-from fastapi import Depends
+from .elements import ButtonCreate, ChartCreate, SwitchCreate, LabelCreate, SliderCreate
 from ..utils.validators import Validator
 
 
@@ -31,7 +27,7 @@ class LayoutItem(BaseModel):
 class UpdateDashboard(BaseModel):
     device_id: str
     layout: list
-    elements: list[ChartCreate | ButtonCreate | SwitchCreate | LabelCreate]
+    elements: list[ChartCreate | ButtonCreate | SwitchCreate | LabelCreate | SliderCreate]
 
     @validator('device_id')
     def validate_device_id(cls, v):

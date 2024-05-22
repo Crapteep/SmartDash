@@ -1,14 +1,14 @@
 from pydantic import BaseModel, constr, validator
 from datetime import datetime
 from typing import Union
-from fastapi import Query, HTTPException, status
+from fastapi import HTTPException, status
 from datetime import timedelta
 from ..utils.validators import Validator
 
 
 
 class DataPoint(BaseModel):
-    value: Union[int, float, str]
+    value: Union[float, int, bool, str]
     timestamp: float
 
 
