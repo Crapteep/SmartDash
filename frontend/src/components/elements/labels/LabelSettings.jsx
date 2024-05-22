@@ -23,10 +23,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Tooltip from "@mui/material/Tooltip";
-import {
-  resetLabelState,
-  resetLabelValue,
-} from "../../../redux/actions/labelActions";
+
 
 const LabelSettings = ({ formData, handleChange, availablePins }) => {
   const [pinDialogOpen, setPinDialogOpen] = useState(false);
@@ -317,8 +314,9 @@ const LabelSettings = ({ formData, handleChange, availablePins }) => {
         </Grid>
       </Grid>
       <Box my={2} />
-
-      <FormControlLabel
+      <Grid container alignItems="center" spacing={2}>
+      <Grid item xs={6}>
+        <FormControlLabel
         control={
           <Checkbox
             checked={formData.show_level}
@@ -338,6 +336,33 @@ const LabelSettings = ({ formData, handleChange, availablePins }) => {
         }
         label="Show level"
       />
+      </Grid>
+
+      <Grid item xs={6}>
+
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={formData.show_label}
+            onChange={(event) => {
+              const customEvent = {
+                ...event,
+                target: {
+                  ...event.target,
+                  name: "show_label",
+                  value: event.target.checked,
+                },
+              };
+              handleInputChange(customEvent);
+            }}
+            name="show_label"
+          />
+        }
+        label="Show label"
+      />
+      </Grid>
+      </Grid>
+      
 
       <Box my={2} />
       {formData.show_level && (

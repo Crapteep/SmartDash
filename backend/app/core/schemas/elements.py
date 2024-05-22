@@ -66,6 +66,7 @@ class LabelCreate(ElementCreateBase):
     min_level: int
     max_level: int
     show_level: bool
+    show_label: bool
     label_position: str
     level_position: str
     unit: str

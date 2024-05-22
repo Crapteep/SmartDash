@@ -74,6 +74,7 @@ const labelSettings = {
   min_level: 0,
   max_level: 1,
   show_level: false,
+  show_label: true,
   virtual_pins: [],
 };
 
