@@ -14,6 +14,8 @@ import ButtonSettings from "./elements/buttons/ButtonSettings";
 import ChartSettings from "./elements/charts/ChartSettings";
 import SwitchSettings from "./elements/buttons/SwitchSettings";
 import LabelSettings from "./elements/labels/LabelSettings";
+import SliderSettings from "./elements/inputs/SliderSettings";
+
 import {
   Dialog,
   DialogTitle,
@@ -152,7 +154,14 @@ export default function Widget({
               handleChange={handleChange}
               availablePins={availablePins}
             />
-          ) : null}
+          ) : element && element.element_type === "slider" ? (
+            <SliderSettings
+              formData={formData}
+              handleChange={handleChange}
+              availablePins={availablePins}
+            />
+          ) : null }
+
         </DialogContent>
         <DialogActions>
           <Button onClick={handleOnClose} color="primary">

@@ -21,6 +21,7 @@ const widgetNames = {
   b: "Button",
   c: "Switch",
   d: "Label",
+  e: "Slider"
 };
 
 const chartSettings = {
@@ -76,6 +77,15 @@ const labelSettings = {
   virtual_pins: [],
 };
 
+const sliderSettings = {
+  element_type: "slider",
+  widget_title: "Slider",
+  alias: "",
+  virtual_pins: [],
+  send_immediately: false,
+  step: 1
+};
+
 const initialLayoutDefaults = {
   chart: {
     w: 10,
@@ -125,6 +135,20 @@ const initialLayoutDefaults = {
     moved: false,
     static: false,
   },
+
+  slider: {
+    w: 4,
+    h: 4,
+    x: 0,
+    y: 0,
+    minW: 4,
+    minH: 3,
+    maxW: 24,
+    maxH: 6,
+    moved: false,
+    static: false,
+  },
+
 };
 
 const widgetSettings = {
@@ -132,6 +156,7 @@ const widgetSettings = {
   b: { ...buttonSettings },
   c: { ...switchSettings },
   d: { ...labelSettings },
+  e: { ...sliderSettings }
 };
 
 const AddList = ({
