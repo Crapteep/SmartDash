@@ -286,7 +286,7 @@ function MyChart({
               <Brush
                 data={data}
                 dataKey="index"
-                ariaLabel="Brush"
+                ariaLabel="Brush1"
                 alwaysShowText={false}
                 height={20}
                 startIndex={zoomState.startIndex}
@@ -342,6 +342,7 @@ function MyChart({
               <Brush
                 dataKey="timestamp"
                 height={20}
+                ariaLabel="Brush2"
                 startIndex={zoomState.startIndex}
                 endIndex={zoomState.endIndex}
                 onChange={(e) => handleBrushChange(e)}
@@ -396,6 +397,7 @@ function MyChart({
               <Brush
                 dataKey="timestamp"
                 height={20}
+                ariaLabel="Brush3"
                 startIndex={zoomState.startIndex}
                 endIndex={zoomState.endIndex}
                 onChange={(e) => handleBrushChange(e)}
@@ -449,6 +451,7 @@ function MyChart({
               <Brush
                 dataKey="timestamp"
                 height={20}
+                ariaLabel="Brush4"
                 startIndex={zoomState.startIndex}
                 endIndex={zoomState.endIndex}
                 onChange={(e) => handleBrushChange(e)}
