@@ -48,7 +48,6 @@ const ConfigDialog = ({
 
 
   const handleSuccessDialogOpen = (event) => {
-    console.log('useefect issuccesful')
     if (event) {
       setIsSuccess(true);
       setDialogMessage({
@@ -76,7 +75,6 @@ const ConfigDialog = ({
 
 
   useEffect(() => {
-    console.log("useefect form");
     setConfigForm({
       name: deviceName,
       hardware: deviceHardware,
@@ -111,7 +109,6 @@ const ConfigDialog = ({
 
   const handleUpdateDevice = (event) => {
     event.preventDefault();
-    console.log(configForm)
     axios
       .put(`${URL}/devices/update/${selectedDevice._id}`, configForm, {
         headers: {

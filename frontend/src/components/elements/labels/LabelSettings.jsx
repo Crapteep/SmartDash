@@ -105,7 +105,6 @@ const LabelSettings = ({ formData, handleChange, availablePins }) => {
 
   const handleChangeUnit = (event) => {
     setSelectedUnit(event.target.value);
-    console.log(event);
     handleInputChange(event);
   };
 

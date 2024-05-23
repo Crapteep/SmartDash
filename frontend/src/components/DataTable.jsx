@@ -12,7 +12,6 @@ const DataTable = ({ data, onDataChange, setEnabled, setSelectedRows }) => {
 
         if (selectedRowIds.length > 0) {
           setSelectedRows(selectedRowIds);
-          console.log(selectedRowIds);
         }
       };
 

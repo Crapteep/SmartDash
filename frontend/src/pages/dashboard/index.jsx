@@ -30,7 +30,7 @@ const Dashboard = () => {
   const [token, setToken] = useState("");
 
   count++;
-  console.log("Aktualizacja dashboard: ", count);
+  // console.log("Aktualizacja dashboard: ", count);
 
   async function handleData(data) {
     if (Array.isArray(data)) {
@@ -43,7 +43,7 @@ const Dashboard = () => {
   }
 
   async function handleSingleData(data) {
-    console.log(data);
+    // console.log(data);
     const { code, pin, timestamp, value } = data;
 
     const reducers = [];

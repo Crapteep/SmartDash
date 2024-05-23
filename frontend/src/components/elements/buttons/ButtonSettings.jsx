@@ -47,7 +47,6 @@ const ButtonSettings = ({ formData, handleChange, availablePins }) => {
   };
 
   const handleAddPin = () => {
-    console.log("dodawania");
     const pinCount = formData.virtual_pins.length;
     if (pinCount < 1) {
       const selectedPin = availablePins.find((pin) => pin.pin === pinNumber);
@@ -67,7 +66,6 @@ const ButtonSettings = ({ formData, handleChange, availablePins }) => {
   };
 
   const handleEditPin = (oldPin, newPin) => {
-    console.log("edycja");
     const editedPinIndex = formData.virtual_pins.findIndex(
       (element) => element.pin === oldPin
     );
@@ -82,7 +80,6 @@ const ButtonSettings = ({ formData, handleChange, availablePins }) => {
         };
 
         handleChange("virtual_pins", [...formData.virtual_pins]);
-        console.log("moze to??", formData.virtual_pins);
       } else {
         console.error(
           `Pin ${pinName} nie został znaleziony w dostępnych pinach.`
@@ -100,10 +97,8 @@ const ButtonSettings = ({ formData, handleChange, availablePins }) => {
 
     if (name === "on_click_value") {
       handleChange(name, convertToNumber(value));
-      console.log("pierwszy");
     } else {
       handleChange(name, value);
-      console.log("drugi");
     }
   };
 

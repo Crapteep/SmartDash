@@ -64,7 +64,6 @@ const TaskManager = ({ tasksData }) => {
   };
 
   const handleCreateVirtualPin = (pinData) => {
-    console.log("dane wysylane", pinData);
     axios
       .post(`${URL}/virtual-pins/new`, pinData, {
         headers: {

@@ -35,14 +35,12 @@ const Settings = () => {
   const URL = import.meta.env.VITE_APP_API_URL;
   const bearerToken = localStorage.getItem("token");
 
-  console.log("SETTINGS", deviceData);
   useEffect(() => {
     if (deviceData) {
       setDeviceSettings(deviceData.settings);
       setDatastream(deviceData.virtual_pins);
     }
 
-    console.log("setuje nowe dane");
   }, [deviceData]);
 
   const handleChange = (event, newValue) => {

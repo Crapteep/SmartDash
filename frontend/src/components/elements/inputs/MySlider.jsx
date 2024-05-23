@@ -75,7 +75,6 @@ export default function SliderSwitch({
         pin: virtual_pins[0].pin,
         value: valueToSend,
       };
-      console.log("wysylam");
       sendData(dataToSend);
     }
   };

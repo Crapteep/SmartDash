@@ -67,7 +67,7 @@ export default function Widget({
   const bearerToken = localStorage.getItem("token");
   const [availablePins, setAvailablePins] = useState([]);
   count++;
-  console.log("Widget render number: ", count);
+  // console.log("Widget render number: ", count);
 
   const handleClickSettings = () => {
     setOpen(true);
@@ -115,7 +115,6 @@ export default function Widget({
     setIsDraggable(true);
   };
   const handleOnClose = () => {
-    console.log("onclose");
     handleCloseDialog();
     setFormData(element);
   };
@@ -124,7 +123,6 @@ export default function Widget({
     onUpdateSettings(formData, id);
     handleCloseDialog();
   };
-  console.log("element", element);
   return (
     <>
       <Dialog open={open} onClose={handleOnClose}>

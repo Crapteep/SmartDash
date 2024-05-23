@@ -62,7 +62,6 @@ const SliderSettings = ({ formData, handleChange, availablePins }) => {
   };
 
   const handleAddPin = () => {
-    console.log("dodawania");
     const pinCount = formData.virtual_pins.length;
     if (pinCount < 1) {
       const selectedPin = availablePins.find((pin) => pin.pin === pinNumber);
@@ -82,7 +81,6 @@ const SliderSettings = ({ formData, handleChange, availablePins }) => {
   };
 
   const handleEditPin = (oldPin, newPin) => {
-    console.log("edycja");
     const editedPinIndex = formData.virtual_pins.findIndex(
       (element) => element.pin === oldPin
     );
@@ -97,7 +95,6 @@ const SliderSettings = ({ formData, handleChange, availablePins }) => {
         };
 
         handleChange("virtual_pins", [...formData.virtual_pins]);
-        console.log("moze to??", formData.virtual_pins);
       } else {
         console.error(
           `Pin ${pinName} nie został znaleziony w dostępnych pinach.`
@@ -112,7 +109,6 @@ const SliderSettings = ({ formData, handleChange, availablePins }) => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    console.log(name, value)
     handleChange(name, value)
   };
 
@@ -141,7 +137,6 @@ const SliderSettings = ({ formData, handleChange, availablePins }) => {
 
   const handleStepChange = (event) => {
     let value = event.target.value;
-    console.log('data type', dataType)
     if (dataType === "int") {
       value = Math.round(parseFloat(value));
     } else {
@@ -152,7 +147,6 @@ const SliderSettings = ({ formData, handleChange, availablePins }) => {
     } else if (value > maxRange) {
       value = maxRange;
     }
-    console.log(event)
     handleChange("step", value)
     formData.step = value;
 

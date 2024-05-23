@@ -71,7 +71,6 @@ const chartTypes = {
 };
 
 const ChartSettings = ({ formData, handleChange, availablePins }) => {
-  console.log(formData);
   const [pinDialogOpen, setPinDialogOpen] = useState(false);
   const [selectedPin, setSelectedPin] = useState(null);
   const [pinNumber, setPinNumber] = useState("");
@@ -175,7 +174,6 @@ const ChartSettings = ({ formData, handleChange, availablePins }) => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    console.log(name, value);
     handleChange(name, value);
   };
 

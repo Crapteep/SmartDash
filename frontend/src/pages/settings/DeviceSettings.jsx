@@ -70,7 +70,6 @@ const DeviceSettings = ({
         },
         description: description,
       };
-      console.log("data to send", dataToSend);
       const response = await axios.put(
         `${URL}/devices/update/${deviceId}`,
         dataToSend
@@ -82,7 +81,6 @@ const DeviceSettings = ({
         message: "Successfully saved changes",
       });
 
-      console.log("Response:", response.data);
     } catch (error) {
       console.error("Error:", error);
       setNotification({

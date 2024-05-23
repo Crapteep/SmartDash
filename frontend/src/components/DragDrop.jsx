@@ -38,7 +38,7 @@ const DropDrag = ({
   const [isDraggable, setIsDraggable] = useState(false);
 
   count++;
-  console.log("Aktualizacja DragDrop: ", count);
+  // console.log("Aktualizacja DragDrop: ", count);
 
   const handleButtonClick = () => {
     if (isEditMode) {

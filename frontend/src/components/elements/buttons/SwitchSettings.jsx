@@ -68,7 +68,6 @@ const SwitchSettings = ({ formData, handleChange, availablePins }) => {
   };
 
   const handleEditPin = (oldPin, newPin) => {
-    console.log("edycja");
     const editedPinIndex = formData.virtual_pins.findIndex(
       (element) => element.pin === oldPin
     );
@@ -83,7 +82,6 @@ const SwitchSettings = ({ formData, handleChange, availablePins }) => {
         };
 
         handleChange("virtual_pins", [...formData.virtual_pins]);
-        console.log("moze to??", formData.virtual_pins);
       } else {
         console.error(
           `Pin ${pinNumber} nie został znaleziony w dostępnych pinach.`

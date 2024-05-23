@@ -113,7 +113,6 @@ const Devices = () => {
   const handleCancel = () => {
     setShowConfirmDialog(false);
   };
-  console.log("laduje");
   if (isLoading) {
     return <Box>ładowanie</Box>;
   }
