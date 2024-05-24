@@ -9,8 +9,8 @@ class VirtualPin(BaseModel):
     pin: constr(min_length=2, max_length=4, regex=r'^V(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')
     data_type: Literal["str", "int", "float"] = Field(alias="dataType")
     color: constr(regex=r'^#([A-Fa-f0-9]{6})$')
-    min_range: Optional[Union[int, float]] = None
-    max_range: Optional[Union[int, float]] = None
+    min_range: Optional[Union[float, int]] = None
+    max_range: Optional[Union[float, int]] = None
     value: Union[int, float, str]
     legend_name: str | None = None
     device_id: str
