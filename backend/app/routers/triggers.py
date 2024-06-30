@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, Path
 from ..auth import auth_handler
 from ..core.schemas import triggers
 from ..core.utils.validators import Validator
@@ -40,8 +40,13 @@ async def handle_trigger_switch(pin: str,  device_id: str, new_state: bool):
     return {"message": f"Trigger successfully {'started' if new_state else 'stopped'}."}
 
 
-@router.post("/{id_}", response_model=triggers.TriggerWithId, status_code=status.HTTP_201_CREATED)
-async def create_trigger(request: triggers.CreateTrigger, id_: str = Depends(Validator.is_valid_object_id),
+@router.post("/{id_}",
+             name="Create a new trigger",
+             description="Creates a new trigger for a given device",
+             response_model=triggers.TriggerWithId,
+             status_code=status.HTTP_201_CREATED)
+async def create_trigger(request: triggers.CreateTrigger,
+                         id_: str = Depends(Validator.validate_device_id),
                          current_user: str = Depends(auth_handler.get_current_user)):
     
     await check_exists(current_user["_id"], id_, "device-id")
@@ -65,8 +70,12 @@ async def create_trigger(request: triggers.CreateTrigger, id_: str = Depends(Val
     return trigger_with_id
 
 
-@router.get("/{id_}", response_model=list[triggers.TriggerResponse], status_code=status.HTTP_200_OK)
-async def get_triggers(id_: str = Depends(Validator.is_valid_object_id),
+@router.get("/{id_}",
+            name="Get all triggers",
+            description="Retrieves all available triggers for a given device id",
+            response_model=list[triggers.TriggerResponse],
+            status_code=status.HTTP_200_OK)
+async def get_triggers(id_: str = Depends(Validator.validate_device_id),
                        current_user: str = Depends(auth_handler.get_current_user)):
     
     triggers = await crud.Trigger.get_triggers(current_user["_id"], id_)
@@ -75,8 +84,12 @@ async def get_triggers(id_: str = Depends(Validator.is_valid_object_id),
     return triggers
 
 
-@router.delete("/{id_}", response_model=triggers.DeleteTriggerResponse, status_code=status.HTTP_200_OK)
-async def delete_trigger(id_: str = Depends(Validator.is_valid_object_id),
+@router.delete("/{id_}",
+               name="Delete trigger",
+               description="Deletes a trigger identified by its ID.",
+               response_model=triggers.DeleteTriggerResponse,
+               status_code=status.HTTP_200_OK)
+async def delete_trigger(id_: str = Depends(Validator.validate_pin_id),
                          current_user: str = Depends(auth_handler.get_current_user)):
     trigger_exists = await check_exists(current_user["_id"], id_, "trigger-id")
     if not trigger_exists:
@@ -88,12 +101,15 @@ async def delete_trigger(id_: str = Depends(Validator.is_valid_object_id),
     return triggers.DeleteTriggerResponse()
 
 
-@router.put("/{pin}", status_code=status.HTTP_200_OK)
+@router.put("/{id_}/{pin}",
+            status_code=status.HTTP_200_OK,
+            name="Update trigger state",
+            description="Updates the state of the trigger - true/false",
+            )
 async def swtich_trigger(*,
-                         pin: str,
-                         id_: str = Query(..., title="Device ID", alias="device_id"),
+                         pin: str = Depends(Validator.is_valid_pin),
+                         id_: str = Depends(Validator.validate_device_id),
                          current_user: str = Depends(auth_handler.get_current_user),
                          new_state: bool
                          ):
-    Validator.is_valid_object_id(id_)
     return await handle_trigger_switch(pin=pin, device_id=id_, new_state=new_state)

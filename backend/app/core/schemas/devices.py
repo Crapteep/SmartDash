@@ -25,13 +25,8 @@ class LayoutItem(BaseModel):
 
 
 class UpdateDashboard(BaseModel):
-    device_id: str
     layout: list
     elements: list[ChartCreate | ButtonCreate | SwitchCreate | LabelCreate | SliderCreate]
-
-    @validator('device_id')
-    def validate_device_id(cls, v):
-        return Validator.is_valid_object_id(v)
 
 
 class DeviceCreate(BaseModel):

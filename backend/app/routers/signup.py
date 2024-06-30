@@ -10,7 +10,9 @@ router = APIRouter(
 )
 
 
-@router.post("/", response_model=response.ResponseModel)
+@router.post("/",
+             response_model=response.ResponseModel,
+             name="Create new user")
 async def create_new_user(user: users.UserCreate):
     if await crud.User.get_by_email(user.email):
         raise HTTPException(

@@ -3,6 +3,7 @@ import re
 from fastapi import HTTPException, Path
 from .error_messages import ErrorMessages
 import datetime
+from typing import Annotated
 
 class Validator:
     @staticmethod
@@ -12,7 +13,7 @@ class Validator:
         return id_
         
     @staticmethod
-    def is_valid_pin(value: str):
+    def is_valid_pin(value: str = Path(..., description="Pin in the range of V0 - V255")):
         regex_pattern = r'^V(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
 
         if re.match(regex_pattern, value):
@@ -28,3 +29,21 @@ class Validator:
         except ValueError:
             raise HTTPException(status_code=400, detail="Invalid timestamp. Must be a valid Unix timestamp in milliseconds")
         return time
+    
+    @staticmethod
+    def validate_device_id(
+        id_: Annotated[str, Path(..., description="Device ID for which data is requested (must be a valid ObjectId)")]
+    ) -> str:
+        return Validator.is_valid_object_id(id_)
+    
+    @staticmethod
+    def validate_pin_id(
+        id_: Annotated[str, Path(..., description="Pin ID for which data is requested (must be a valid ObjectId)")]
+    ) -> str:
+        return Validator.is_valid_object_id(id_)
+    
+    @staticmethod
+    def validate_element_id(
+        id_: Annotated[str, Path(..., description="Element ID for which data is requested (must be a valid ObjectId)")]
+    ) -> str:
+        return Validator.is_valid_object_id(id_)

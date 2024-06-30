@@ -16,7 +16,9 @@ router = APIRouter(
     dependencies=[Depends(auth_handler.get_current_user)]
 )
 
-@router.get('/')
+@router.get('/',
+            name="Get all user elements",
+            description="Allows to get all items from all user devices")
 async def get_elements(current_user: users.User = Depends(auth_handler.get_current_user),
                             length: Annotated[int | None, Query(alias="number-of-elements", ge=1, le=100)] = 100):
     response = await crud.Element.get_elements(current_user["_id"], length)
@@ -25,8 +27,10 @@ async def get_elements(current_user: users.User = Depends(auth_handler.get_curre
     return {"message": "There are no elements yet!"}
 
 
-@router.get('/{id_}')
-async def get_device_elements(id_: str = Depends(Validator.is_valid_object_id), current_user: users.User = Depends(auth_handler.get_current_user)):
+@router.get('/{id_}',
+            name="Get elements from a specific device",
+            description="Allows you to download all the elements of a given device that have been added to the dashboard")
+async def get_device_elements(id_: str = Depends(Validator.validate_element_id), current_user: users.User = Depends(auth_handler.get_current_user)):
     await check_exists(current_user["_id"], id_, "device-id")
     response = await crud.Element.get_device_elements(current_user["_id"], id_)
 
@@ -34,7 +38,9 @@ async def get_device_elements(id_: str = Depends(Validator.is_valid_object_id), 
         return response
     return {"message": "This device doesn't have any elements yet"}
 
-@router.post('/create')
+@router.post('/',
+             name="Create a new element",
+             description="Allows you to create a new item in the dashboard")
 async def create_element(element: elements.ElementCreate, current_user: users.User = Depends(auth_handler.get_current_user)):
     Validator.is_valid_object_id(element.device_id)
 
@@ -48,9 +54,10 @@ async def create_element(element: elements.ElementCreate, current_user: users.Us
     return {"message": "Element has been created!"}
     
 
-
-@router.delete('/delete/{id_}', description="Delete exists element")
-async def delete_element(id_: str = Depends(Validator.is_valid_object_id),
+@router.delete('/{id_}', 
+               name="Delete exists element",
+               description="Allows you to delete an existing item in the dashboard")
+async def delete_element(id_: str = Depends(Validator.validate_element_id),
                         current_user: users.User = Depends(auth_handler.get_current_user)):
     await check_exists(current_user["_id"], id_, "element-id")
 
@@ -60,9 +67,11 @@ async def delete_element(id_: str = Depends(Validator.is_valid_object_id),
     return {"message": "Element has been deleted!"}
     
 
-@router.patch('/{id_}')
+@router.patch('/{id_}',
+              name="Update exists element",
+              description="Allows you to update an existing item in the dashboard")
 async def update_element(*,
-                             id_: str = Depends(Validator.is_valid_object_id),
+                             id_: str = Depends(Validator.validate_element_id),
                              update_data: elements.UpdateChartField,
                              current_user: users.User = Depends(auth_handler.get_current_user)):
 

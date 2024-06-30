@@ -13,7 +13,9 @@ router = APIRouter(
 )
 
 
-@router.get('/', description="Fetch all user devices")
+@router.get('/',
+            name='Get all user devices',
+            description="Allows you to take all the devices that the  current user has created")
 async def get_devices(current_user: users.User = Depends(auth_handler.get_current_user)):
     response = await crud.Device.get_devices(current_user["_id"])
     if response:
@@ -21,8 +23,9 @@ async def get_devices(current_user: users.User = Depends(auth_handler.get_curren
     return {"message": "There are no devices yet!"}
 
 
-@router.get('/{id_}', description="Fetch specific device")
-async def get_device(id_: str = Depends(Validator.is_valid_object_id),
+@router.get('/{id_}',
+            name='Get data from a particular device')
+async def get_device(id_: str = Depends(Validator.validate_device_id),
                     current_user: users.User = Depends(auth_handler.get_current_user)):
 
     device = await crud.Device.get_device(current_user["_id"], id_)
@@ -38,7 +41,9 @@ async def get_device(id_: str = Depends(Validator.is_valid_object_id),
     return {"settings": device, "virtual_pins": virtual_pins}
 
 
-@router.post('/create', response_model=response.ResponseModel, description="Create new device")
+@router.post('/',
+             response_model=response.ResponseModel,
+             name="Create new device")
 async def create_new_device(device: devices.DeviceCreate, current_user: users.User = Depends(auth_handler.get_current_user)):
     user_id = current_user["_id"]
     device.user_id = user_id
@@ -55,8 +60,10 @@ async def create_new_device(device: devices.DeviceCreate, current_user: users.Us
     return {"message": "Device has been created!"}
     
     
-@router.delete('/delete/{id_}', response_model=response.ResponseModel, description="Delete exists device")
-async def delete_device(id_: str = Depends(Validator.is_valid_object_id), current_user: users.User = Depends(auth_handler.get_current_user)):
+@router.delete('/{id_}',
+               response_model=response.ResponseModel,
+               name="Delete exists device")
+async def delete_device(id_: str = Depends(Validator.validate_device_id), current_user: users.User = Depends(auth_handler.get_current_user)):
     response = await crud.Device.delete(filter_fields= {"_id": ObjectId(id_), "user_id": ObjectId(current_user["_id"])})
     if response:
         await crud.Element.delete(filter_fields={"device_id": ObjectId(id_)}, delete_many=True)
@@ -67,8 +74,8 @@ async def delete_device(id_: str = Depends(Validator.is_valid_object_id), curren
     raise HTTPException(404, detail="Devices not found!")
 
 
-@router.put('/update/{id_}', response_model=response.ResponseModel, description="Update specific device")
-async def update_device(*, id_: str = Depends(Validator.is_valid_object_id), update_data: devices.DeviceUpdate, current_user: users.User = Depends(auth_handler.get_current_user)):
+@router.put('/{id_}', response_model=response.ResponseModel, description="Update specific device")
+async def update_device(*, id_: str = Depends(Validator.validate_device_id), update_data: devices.DeviceUpdate, current_user: users.User = Depends(auth_handler.get_current_user)):
     response = await crud.Device.update(id_, current_user["_id"], update_data.dict())
     if response:
         return {"message": "Device has been updated!"}

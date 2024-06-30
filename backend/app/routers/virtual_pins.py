@@ -15,7 +15,10 @@ router = APIRouter(
 )
 
 
-@router.post("/new")
+@router.post("/",
+             name="Create a new virtual pin",
+             description="Allows you to create a new virtual pin at a given request body",
+             )
 async def create_virtual_pin(virtual_pin: virtual_pins.VirtualPin,
                              current_user: users.User = Depends(auth_handler.get_current_user)):
     
@@ -40,9 +43,11 @@ async def create_virtual_pin(virtual_pin: virtual_pins.VirtualPin,
     return {"message": "Virtual pin was created successfully"}
     
 
-@router.delete("/{id_}/delete-virtual-pins")
+@router.delete("/{id_}",
+               name="Delete several virtual pins",
+               description="Allows you to remove several virtual pins listed in the body requests for a given device",)
 async def delete_virtual_pins(*,
-                              id_: str = Depends(Validator.is_valid_object_id),
+                              id_: str = Depends(Validator.validate_device_id),
                               deleted_ids: list[str],
                               current_user: users.User = Depends(auth_handler.get_current_user)):
     for pin_id in deleted_ids:
@@ -67,11 +72,12 @@ async def delete_virtual_pins(*,
     return {"message": "Virtual pins was deleted successfully"}
 
 
-@router.get("/{device_id}/available-pins")
-async def get_available_pins(device_id: str,
+@router.get("/{id_}/available-pins",
+            name="Get available pins for a given device ID",
+            description="Get all virtual pins that are available for a given type of element",)
+async def get_available_pins(id_: str = Depends(Validator.validate_device_id),
                              q: QOptions = Query(...),
                              current_user: users.User = Depends(auth_handler.get_current_user)):
-    Validator.is_valid_object_id(device_id)
 
     data_type_mapping = {
         'chart': ["int", "float"],
@@ -83,20 +89,20 @@ async def get_available_pins(device_id: str,
     }
 
     data_type = data_type_mapping[q]
-    found_pins = await crud.Pin.get_pins_by_data_types(data_type, device_id, current_user["_id"])
+    found_pins = await crud.Pin.get_pins_by_data_types(data_type, id_, current_user["_id"])
     if found_pins:
         
         return {"pins": found_pins}
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
 
-@router.get("/{id_}/used-pins")
+@router.get("/{id_}/used-pins",
+            name="Get used pins for a given device ID",
+            description="Get all virtual pins that are currently in use for a given device")
 async def get_used_pins(id_: str = Depends(Validator.is_valid_object_id),
                         current_user: users.User = Depends(auth_handler.get_current_user)):
     
     elements = await crud.Element.get_device_elements(current_user["_id"], id_)
-
-
     result = {
             "chart": [],
             "label": [],
@@ -109,7 +115,6 @@ async def get_used_pins(id_: str = Depends(Validator.is_valid_object_id),
         return result
     
     for element in elements:
-
         element_type = element.get("element_type")
         virtual_pins = element.get("virtual_pins", [])
 

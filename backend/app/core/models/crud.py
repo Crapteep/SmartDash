@@ -183,27 +183,6 @@ class Device(BaseCollection):
             virtual_pins = device.get("virtual_pins", [])
             return virtual_pins
         return []
-    
-
-    @classmethod
-    @handle_database_errors
-    async def update_dashboard_widget_settings(cls, device_id: str, widget_id: str, new_settings: dict):
-        query = {
-            "_id": ObjectId(device_id),
-            "dashboard.layout.instanceId": widget_id
-        }
-        update = {
-            "$set": {
-                f"dashboard.layout.$.settings": new_settings
-            }
-        }
-
-        document = await cls.collection.update_one(query, update)
-        
-        if document.modified_count == 1:
-            return True
-        else:
-            return False
         
         
 

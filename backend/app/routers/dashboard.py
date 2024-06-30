@@ -31,19 +31,14 @@ async def complete_elements_with_data(device_id, elements):
     return elements_with_data
 
 
-@router.get('/')
-async def get_dashboard_setting():
-    pass
-
-
-@router.post('/create')
-async def create_dashboard():
-    pass
-
-@router.put("/update")
-async def update_dashboard(update_data: devices.UpdateDashboard, current_user: users.User = Depends(auth_handler.get_current_user)):
+@router.put("/{id_}",
+            name="Update dashboard",
+            description="Updates the dashboard when any changes occur")
+async def update_dashboard(update_data: devices.UpdateDashboard, 
+                           current_user: users.User = Depends(auth_handler.get_current_user),
+                           id_: str = Depends(Validator.validate_device_id)):
     user_id = current_user["_id"]
-    device = await crud.Device.get_device(user_id, update_data.device_id)
+    device = await crud.Device.get_device(user_id, id_)
     if not device:
         raise HTTPException(status_code=404, detail="Device not found!")
 
@@ -55,7 +50,7 @@ async def update_dashboard(update_data: devices.UpdateDashboard, current_user: u
             return element_id
         except errors.InvalidId:
             element_data["user_id"] = user_id
-            element_data["device_id"] = ObjectId(update_data.device_id)
+            element_data["device_id"] = ObjectId(id_)
             element_data["created_at"] = datetime.now()
             element_data["updated_at"] = datetime.now()
             response = await crud.Element.create(element_data)
@@ -85,40 +80,21 @@ async def update_dashboard(update_data: devices.UpdateDashboard, current_user: u
                 layout["element_id"] = new_element_id
                 break
 
-    await crud.Device.update(update_data.device_id, user_id, {"layout": update_data.layout})
+    await crud.Device.update(id_, user_id, {"layout": update_data.layout})
     
     return {"message": "Dashboard and elements have been successfully updated"}
 
 
-@router.get('/{device_id}')
-async def get_device_dashboard_settings(device_id: str = Path(..., title='device id'),
+@router.get('/{id_}',
+            name="Get dashboard settings",
+            description="Retrieves all the data needed to build a dashboard for a given device")
+async def get_device_dashboard_settings(id_: str = Path(..., title='device id'),
                                         current_user: users.User = Depends(auth_handler.get_current_user)):
-    device = await crud.Device.get_device(current_user["_id"], device_id)
-    elements = await crud.Element.get_device_elements(current_user["_id"], device_id)
+    device = await crud.Device.get_device(current_user["_id"], id_)
+    elements = await crud.Element.get_device_elements(current_user["_id"], id_)
     
-    elements_with_data = await complete_elements_with_data(device_id, elements)
+    elements_with_data = await complete_elements_with_data(id_, elements)
     if not device:
         raise HTTPException(404, ErrorMessages.DeviceNotFound)
     
     return {"layout": device.get("layout", []), "elements": elements_with_data}
-
-    
-
-@router.patch('/{device_id}/settings/{widget_id}')
-async def update_settings(*, device_id: str = Path(...),
-                          widget_id: str = Path(...),
-                          current_user: users.User = Depends(auth_handler.get_current_user),
-                          new_settings: dict):
-    if not Validator.is_valid_object_id(device_id):
-        raise HTTPException(status_code=400, detail=ErrorMessages.InvalidID)
-    
-    try:
-        response = await crud.Device.update_dashboard_widget_settings(device_id, widget_id, new_settings)
-        if response:
-            return {"message": f"The settings of this widget [{widget_id}] in the dashboard have been successfully updated"}
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-
-  
-    raise HTTPException(status_code=status.HTTP_200_OK, detail=f"The settings of this widget [{widget_id}] in the dashboard are already up-to-date")
-
