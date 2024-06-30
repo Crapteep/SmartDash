@@ -65,7 +65,7 @@ const TaskManager = ({ tasksData }) => {
 
   const handleCreateVirtualPin = (pinData) => {
     axios
-      .post(`${URL}/api/v1/virtual-pins/new`, pinData, {
+      .post(`${URL}/api/v1/virtual-pins`, pinData, {
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${bearerToken}`,

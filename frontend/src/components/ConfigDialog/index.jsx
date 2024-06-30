@@ -87,7 +87,7 @@ const ConfigDialog = ({
   const handleCreateDevice = (event) => {
     event.preventDefault();
     axios
-      .post(`${URL}/api/v1/devices/create`, configForm, {
+      .post(`${URL}/api/v1/devices`, configForm, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -110,7 +110,7 @@ const ConfigDialog = ({
   const handleUpdateDevice = (event) => {
     event.preventDefault();
     axios
-      .put(`${URL}/api/v1/devices/update/${selectedDevice._id}`, configForm, {
+      .put(`${URL}/api/v1/devices/${selectedDevice._id}`, configForm, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",

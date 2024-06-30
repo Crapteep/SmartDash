@@ -89,7 +89,7 @@ const Devices = () => {
 
   const handleConfirm = () => {
     axios
-      .delete(`${URL}/api/v1/devices/delete/${removalDevice}`, {
+      .delete(`${URL}/api/v1/devices/${removalDevice}`, {
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${bearerToken}`,

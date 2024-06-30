@@ -123,13 +123,12 @@ const Dashboard = () => {
     });
 
     const update_data = {
-      device_id: selectedDevice._id,
       layout: layout,
       elements: updatedElements,
     };
 
     try {
-      const response = await axios.put(`${URL}/api/v1/dashboard/update`, update_data);
+      const response = await axios.put(`${URL}/api/v1/dashboard/${selectedDevice._id}`, update_data);
       fetchDeviceLayout(selectedDevice._id);
       fetchUsedPinsData(selectedDevice._id);
     } catch (error) {

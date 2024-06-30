@@ -127,7 +127,7 @@ const Datastream = ({ deviceId, pinsData }) => {
 
   const handleCreateVirtualPin = (pinData) => {
     axios
-      .post(`${URL}/api/v1/virtual-pins/new`, pinData, {
+      .post(`${URL}/api/v1/virtual-pins`, pinData, {
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${bearerToken}`,
@@ -185,7 +185,7 @@ const Datastream = ({ deviceId, pinsData }) => {
 
   const handleConfirm = (deletedIds) => {
     axios
-      .delete(`${URL}/api/v1/virtual-pins/${deviceId}/delete-virtual-pins`, {
+      .delete(`${URL}/api/v1/virtual-pins/${deviceId}`, {
         data: deletedIds,
         headers: {
           Accept: "application/json",
