@@ -129,7 +129,7 @@ const Dashboard = () => {
     };
 
     try {
-      const response = await axios.put(`${URL}/dashboard/update`, update_data);
+      const response = await axios.put(`${URL}/api/v1/dashboard/update`, update_data);
       fetchDeviceLayout(selectedDevice._id);
       fetchUsedPinsData(selectedDevice._id);
     } catch (error) {
@@ -159,7 +159,7 @@ const Dashboard = () => {
   const fetchUsedPinsData = async (deviceId) => {
     try {
       const response = await axios.get(
-        `${URL}/virtual-pins/${deviceId}/used-pins`
+        `${URL}/api/v1/virtual-pins/${deviceId}/used-pins`
       );
       setUsedPins(response.data);
     } catch (error) {
@@ -169,7 +169,7 @@ const Dashboard = () => {
 
   const fetchDeviceLayout = async (deviceId) => {
     try {
-      const response = await axios.get(`${URL}/dashboard/${deviceId}`);
+      const response = await axios.get(`${URL}/api/v1/dashboard/${deviceId}`);
       processResponseData(response);
     } catch (error) {
       console.error("Error:", error);

@@ -78,7 +78,7 @@ export default function Widget({
   const getAvailablePins = () => {
     axios
       .get(
-        `${URL}/virtual-pins/${selectedDevice._id}/available-pins?q=${element.element_type}`,
+        `${URL}/api/v1/virtual-pins/${selectedDevice._id}/available-pins?q=${element.element_type}`,
         {
           headers: {
             Accept: "application/json",

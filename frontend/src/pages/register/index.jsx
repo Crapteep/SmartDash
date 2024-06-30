@@ -40,7 +40,7 @@ export default function Register() {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post(`${URL}/signup/`, {
+      .post(`${URL}/api/v1/signup/`, {
         ...formData,
       })
       .then((response) => {

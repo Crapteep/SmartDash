@@ -31,7 +31,7 @@ export default function Login({ setIsLoggedIn }) {
     e.preventDefault();
 
     axios
-      .post(`${URL}/token/`, formData, {
+      .post(`${URL}/api/v1/token/`, formData, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/x-www-form-urlencoded",

@@ -71,7 +71,7 @@ const DeviceSettings = ({
         description: description,
       };
       const response = await axios.put(
-        `${URL}/devices/update/${deviceId}`,
+        `${URL}/api/v1/devices/update/${deviceId}`,
         dataToSend
       );
       onUpdate(dataToSend);

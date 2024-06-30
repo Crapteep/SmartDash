@@ -102,7 +102,7 @@ function MyChart({
   const fetchArchivePinData = (timeAgo, pinName) => {
     axios
       .get(
-        `${URL}/archive-data/${device_id}?pin=${pinName}&time_ago=${timeAgo}`
+        `${URL}/api/v1/archive-data/${device_id}/${pinName}?time_ago=${timeAgo}`
       )
       .then((response) => {
         setData(response.data);
@@ -122,7 +122,7 @@ function MyChart({
       value: selectedRange,
     };
     axios
-      .patch(`${URL}/elements/${_id}`, updateData)
+      .patch(`${URL}/api/v1/elements/${_id}`, updateData)
       .then((response) => {
         pass;
       })

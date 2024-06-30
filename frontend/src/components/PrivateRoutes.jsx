@@ -17,7 +17,7 @@ const PrivateRoutes = ({ setIsLoggedIn }) => {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
       axios
-        .get(`${URL}/users/me`)
+        .get(`${URL}/api/v1/users/me`)
         .then((response) => {
           setUser(response.data);
           setIsAuthenticated(true);
@@ -30,7 +30,7 @@ const PrivateRoutes = ({ setIsLoggedIn }) => {
             error.response.data.detail === "Token wygasł"
           ) {
             axios
-              .post(`${URL}/refresh_token/`, { token: token })
+              .post(`${URL}/api/v1/refresh_token/`, { token: token })
               .then((response) => {
                 const newToken = response.data.access_token;
                 localStorage.setItem("token", newToken);

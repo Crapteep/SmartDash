@@ -8,7 +8,7 @@ const useUsedPinsData = (deviceId) => {
     queryKey: ["used-pins", deviceId],
     queryFn: async () => {
       const { data } = await axios.get(
-        `${URL}/virtual-pins/${deviceId}/used-pins`
+        `${URL}/api/v1/virtual-pins/${deviceId}/used-pins`
       );
       return data;
     },

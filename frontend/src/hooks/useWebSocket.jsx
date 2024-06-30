@@ -7,7 +7,7 @@ export const useWebSocket = (handleData, token = "", usedPins) => {
     const connectWebSocket = () => {
       const URLWithoutProtocol = URL.replace(/^https?:\/\//, "");
       ws.current = new WebSocket(
-        `wss://${URLWithoutProtocol}/ws/?token=${token}`
+        `ws://${URLWithoutProtocol}/api/v1/ws/?token=${token}`
       );
 
       ws.current.onopen = () => {
