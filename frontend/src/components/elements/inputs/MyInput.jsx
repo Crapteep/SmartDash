@@ -166,7 +166,7 @@ export default function InputSwitch({
                     width: "100%",
                     boxSizing: "border-box",
                     marginLeft: "15px",
-                    marginRight: "-5px",
+                    marginRight: "-10px",
                     marginBottom: "5px",
                     '& .MuiInputBase-input': {
                       fontSize: {
