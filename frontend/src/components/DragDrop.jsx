@@ -138,6 +138,10 @@ const DropDrag = ({
                     windowHeight={window.innerHeight}
                     selectedDevice={selectedDevice}
                     onUpdateSettings={onUpdateSettings}
+                    setElements={setElements}
+                    setLayout={setLayout}
+                    layout={layout}
+                    elements={elements}
                   />
                 </div>
               );
