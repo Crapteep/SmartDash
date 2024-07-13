@@ -13,11 +13,11 @@ class Validator:
         return id_
         
     @staticmethod
-    def is_valid_pin(value: str = Path(..., description="Pin in the range of V0 - V255")):
+    def is_valid_pin(pin: str = Path(..., description="Pin in the range of V0 - V255")):
         regex_pattern = r'^V(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
 
-        if re.match(regex_pattern, value):
-            return value
+        if re.match(regex_pattern, pin):
+            return pin
         raise HTTPException(422, detail=ErrorMessages.InvalidPinFormat)
     
     @staticmethod
@@ -25,7 +25,7 @@ class Validator:
         if not isinstance(time, float):
             raise HTTPException(status_code=400, detail="Start time must be an integer representing a Unix timestamp in milliseconds")
         try:
-            datetime.datetime.utcfromtimestamp(time / 1000.0)
+            datetime.datetime.fromtimestamp(time / 1000.0, datetime.UTC)
         except ValueError:
             raise HTTPException(status_code=400, detail="Invalid timestamp. Must be a valid Unix timestamp in milliseconds")
         return time

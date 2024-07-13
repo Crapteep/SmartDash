@@ -15,5 +15,6 @@ class ErrorMessages:
     DeleteFailed = "Item deletion has failed"
     CreateFailed = "Item creation has failed"
     ConnectionNotFound = "Connection not found!"
+    NotAuthorized = "Not Authorized"
 
 
