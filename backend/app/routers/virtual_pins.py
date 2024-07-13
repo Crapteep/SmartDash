@@ -85,7 +85,8 @@ async def get_available_pins(id_: str = Depends(Validator.validate_device_id),
         'switch': ["int", "float"],
         'slider': ["int", "float"],
         'label': ["str", "int", "float"],
-        'diode': ["int"]
+        'diode': ["int"],
+        'input': ["str", "int", "float"],
     }
 
     data_type = data_type_mapping[q]
@@ -138,3 +139,38 @@ async def get_used_pins(id_: str = Depends(Validator.is_valid_object_id),
             result[key] = [result[key]]
 
     return result
+
+
+@router.put("/{id_}",
+            name="Update a virtual pin",
+            description="Allows you to update an existing virtual pin",
+            )
+async def update_virtual_pin(
+    *,
+    id_: str = Depends(Validator.is_valid_pin),
+    update_data: virtual_pins.VirtualPinUpdate,
+    current_user: users.User = Depends(auth_handler.get_current_user)
+):
+    
+    existing_pin = await crud.Pin.get_pin_by_id(id_)
+    if not existing_pin:
+        raise HTTPException(404, ErrorMessages.VirtualPinNotFound)
+    
+    if str(existing_pin["user_id"]) != str(current_user["_id"]):
+        raise HTTPException(403, ErrorMessages.NotAuthorized)
+    
+    update_dict = update_data.dict(exclude_unset=True)
+    
+    if "device_id" in update_dict:
+        Validator.is_valid_object_id(update_dict["device_id"])
+        device = await crud.Device.device_exists(update_dict["device_id"])
+        if not device:
+            raise HTTPException(404, ErrorMessages.DeviceNotFound)
+        update_dict["device_id"] = ObjectId(update_dict["device_id"])
+    
+    result = await crud.Pin.update(id_, current_user["_id"], update_dict)
+    
+    if not result:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    return {"message": "Virtual pin was updated successfully"}

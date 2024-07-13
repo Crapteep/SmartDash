@@ -10,16 +10,18 @@ import TopBar from "./TopBar";
 import MySwitch from "./elements/buttons/MySwitch";
 import MyLabel from "./elements/labels/MyLabel";
 import MySlider from "./elements/inputs/MySlider";
+import MyInput from "./elements/inputs/MyInput";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-const originalItems = ["a", "b", "c", "d", "e"];
+const originalItems = ["a", "b", "c", "d", "e", "f"];
 
 const componentList = {
   a: Chart,
   b: MyButton,
   c: MySwitch,
   d: MyLabel,
-  e: MySlider
+  e: MySlider,
+  f: MyInput
 };
 
 let count = 0;

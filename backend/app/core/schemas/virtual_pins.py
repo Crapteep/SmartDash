@@ -38,3 +38,4 @@ class QOptions(str, Enum):
     label = 'label'
     diode = 'diode'
     switch = 'switch'
+    input_val = 'input'

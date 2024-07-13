@@ -21,7 +21,8 @@ const widgetNames = {
   b: "Button",
   c: "Switch",
   d: "Label",
-  e: "Slider"
+  e: "Slider",
+  f: "Input",
 };
 
 const chartSettings = {
@@ -87,6 +88,15 @@ const sliderSettings = {
   step: 1
 };
 
+const inputSettings = {
+  element_type: "input",
+  widget_title: "Value input",
+  alias: "",
+  virtual_pins: [],
+  input_type: "number",
+  send_immediately: false,
+}
+
 const initialLayoutDefaults = {
   chart: {
     w: 10,
@@ -149,6 +159,19 @@ const initialLayoutDefaults = {
     moved: false,
     static: false,
   },
+  input: {
+    w: 4,
+    h: 3,
+    x: 0,
+    y: 0,
+    minW: 3,
+    minH: 3,
+    maxW: 24,
+    maxH: 6,
+    moved: false,
+    static: false,
+  },
+
 
 };
 
@@ -157,7 +180,8 @@ const widgetSettings = {
   b: { ...buttonSettings },
   c: { ...switchSettings },
   d: { ...labelSettings },
-  e: { ...sliderSettings }
+  e: { ...sliderSettings },
+  f: { ...inputSettings },
 };
 
 const AddList = ({

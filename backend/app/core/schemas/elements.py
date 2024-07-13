@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, validator, Field
 from datetime import datetime
 from typing import Union
 from fastapi import HTTPException, status
@@ -77,6 +77,15 @@ class SliderCreate(ElementCreateBase):
     step: Union[float, int]
 
 
+class InputCreate(ElementCreateBase):
+    send_immediately: bool = Field(..., description="Flag to indicate if the value should be sent immediately.")
+    input_type: Union[str, None] = Field("text", description="Type of input, can be 'number' or 'text'")
+
+    @validator('input_type')
+    def validate_input_type(cls, v):
+        if v not in ["number", "text"]:
+            raise ValueError("input_type must be 'number' or 'text'")
+        return v
 
 class UpdateChartField(BaseModel):
     field: str 

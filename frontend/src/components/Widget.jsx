@@ -17,7 +17,7 @@ import ChartSettings from "./elements/charts/ChartSettings";
 import SwitchSettings from "./elements/buttons/SwitchSettings";
 import LabelSettings from "./elements/labels/LabelSettings";
 import SliderSettings from "./elements/inputs/SliderSettings";
-
+import InputSettings from "./elements/inputs/InputSettings";
 import {
   Dialog,
   DialogTitle,
@@ -185,6 +185,12 @@ export default function Widget({
             />
           ) : element && element.element_type === "label" ? (
             <LabelSettings
+              formData={formData}
+              handleChange={handleChange}
+              availablePins={availablePins}
+            />
+          ) : element && element.element_type === "input" ? (
+            <InputSettings
               formData={formData}
               handleChange={handleChange}
               availablePins={availablePins}
