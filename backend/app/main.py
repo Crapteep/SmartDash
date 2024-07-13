@@ -23,16 +23,7 @@ app.include_router(archive_data.router, prefix="/api/v1")
 manager = Manager()
 
 origins = [
-#    settings.client_url,
-   "http://localhost:5173",
-    "http://localhost:8000",
-    "http://192.168.0.102:3000",
-    "http://192.168.0.103:8000",
-    "http://192.168.0.103:5173",
-    "http://192.168.0.101:5173",
-    "http://192.168.0.101:8000",
-    "http://192.168.0.106:5173",
-    "http://192.168.0.106:8000",
+    settings.client_url,
 ]
 
 
