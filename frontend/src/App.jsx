@@ -4,6 +4,7 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation
 } from "react-router-dom";
 import Topbar from "./pages/global/Topbar";
 import Sidebar from "./pages/global/Sidebar";
@@ -38,14 +39,14 @@ function App() {
         <Provider store={store}>
           <UserProvider>
             <div className="app">
-              {isLoggedIn && <Sidebar isSidebar={isSidebar} />}
+            {isLoggedIn && <ConditionalSidebar isSidebar={isSidebar} />}
               <main className="content">
-                {isLoggedIn && (
-                  <Topbar
-                    setIsSidebar={setIsSidebar}
-                    setIsLoggedIn={setIsLoggedIn}
-                  />
-                )}
+              {isLoggedIn && (
+                    <ConditionalTopbar
+                      setIsSidebar={setIsSidebar}
+                      setIsLoggedIn={setIsLoggedIn}
+                    />
+                  )}
                 <Routes>
                   <Route
                     element={<PrivateRoutes setIsLoggedIn={setIsLoggedIn} />}
@@ -55,7 +56,7 @@ function App() {
                     <Route path="/devices/:id" element={<Settings />} />
                     <Route path="/faq" element={<FAQ />} />
                   </Route>
-                  <Route path="/" element={<Home setIsLoggedIn={setIsLoggedIn}/>} />
+                  <Route path="/" element={<Home isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} />
                   <Route path="*" element={<PageNotFound/>} />
                 </Routes>
               </main>
@@ -65,6 +66,29 @@ function App() {
       </ThemeProvider>
     </ColorModeContext.Provider>
   );
+}
+
+function ConditionalSidebar({ isSidebar }) {
+  const location = useLocation();
+
+  if (location.pathname !== "/") {
+    return <Sidebar isSidebar={isSidebar} />;
+  }
+  return null;
+}
+
+function ConditionalTopbar({ setIsSidebar, setIsLoggedIn }) {
+  const location = useLocation();
+
+  if (location.pathname !== "/") {
+    return (
+      <Topbar
+        setIsSidebar={setIsSidebar}
+        setIsLoggedIn={setIsLoggedIn}
+      />
+    );
+  }
+  return null;
 }
 
 export default App;

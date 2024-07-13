@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Container, Typography, Button } from '@mui/material';
 import { styled } from '@mui/system';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const HeroContainer = styled(Box)(({ theme }) => ({
   backgroundColor: '#f4f4f4',
@@ -9,7 +9,15 @@ const HeroContainer = styled(Box)(({ theme }) => ({
   textAlign: 'center',
 }));
 
-const HeroSection = ({openAuthModal}) => {
+const HeroSection = ({ openAuthModal, isLoggedIn }) => {
+    const navigate = useNavigate();
+    const handleGetStarted = () => {
+      if (isLoggedIn) {
+        navigate('/dashboard')
+      } else {
+        openAuthModal();
+      }
+    };
   return (
     <HeroContainer>
       <Container>
@@ -19,7 +27,7 @@ const HeroSection = ({openAuthModal}) => {
         <Typography variant="h5" component="p" gutterBottom>
           Create customizable dashboards for your Raspberry Pi, Arduino, ESP32, and more.
         </Typography>
-        <Button onClick={openAuthModal} variant="contained" color="primary" size="large">
+        <Button onClick={handleGetStarted} variant="contained" color="primary" size="large">
           Get Started
         </Button>
       </Container>
