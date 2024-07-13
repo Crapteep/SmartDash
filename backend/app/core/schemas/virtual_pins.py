@@ -31,6 +31,11 @@ class VirtualPin(BaseModel):
         return v
 
 
+class VirtualPinUpdate(VirtualPin):
+    class Config:
+        allow_population_by_field_name = True
+
+
 class QOptions(str, Enum):
     chart = 'chart'
     button = 'button'
