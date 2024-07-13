@@ -1,0 +1,97 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  header {
+    background: #333;
+    color: white;
+    padding: 1rem 0;
+  }
+  
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+  }
+  
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+  }
+  
+  nav a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  #hero {
+    background: #f4f4f4;
+    padding: 2rem 0;
+    text-align: center;
+  }
+  
+  #hero .hero-content {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  #hero h1 {
+    margin: 0;
+    font-size: 2.5rem;
+  }
+  
+  #features,
+  #devices,
+  #dashboard {
+    padding: 2rem 0;
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .features,
+  .devices,
+  .dashboards {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+  }
+  
+  .feature,
+  .device,
+  .dashboard {
+    text-align: center;
+  }
+  
+  .icon-dashboard,
+  .icon-realtime,
+  .icon-security {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  footer {
+    background: #333;
+    color: white;
+    padding: 1rem 0;
+    text-align: center;
+  }
+  
+  footer ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  footer a {
+    color: white;
+    text-decoration: none;
+  }
