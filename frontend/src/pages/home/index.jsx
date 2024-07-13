@@ -7,9 +7,11 @@ import DeviceIntegrationSection from '../../components/home-page/DeviceIntegrati
 import DashboardSection from '../../components/home-page/DashboardPaper';
 import Footer from '../../components/home-page/Footer';
 import AuthModal from '../../components/AuthModal';
+import { useNavigate } from 'react-router-dom';
 
-function Home({setIsLoggedIn}) {
+function Home({ isLoggedIn, setIsLoggedIn }) {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleOpenAuthModal = () => {
     setIsAuthModalOpen(true);
@@ -19,14 +21,16 @@ function Home({setIsLoggedIn}) {
     setIsAuthModalOpen(false);
   };
 
+  const handleDashboardClick = () => {
+    navigate('/dashboard');
+  };
+
   return (
     <>
-      <Header>
-        <Box>
-          <Button color="inherit" onClick={handleOpenAuthModal}>Login</Button>
-        </Box>
-      </Header>
-      <HeroSection openAuthModal={handleOpenAuthModal}/>
+      <Header isLoggedIn={isLoggedIn}>
+  <Button color="inherit" onClick={handleOpenAuthModal}>Login</Button>
+</Header>
+      <HeroSection openAuthModal={handleOpenAuthModal} isLoggedIn={isLoggedIn}/>
       <FeaturesSection />
       <DeviceIntegrationSection />
       <DashboardSection />

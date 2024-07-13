@@ -60,6 +60,11 @@ export default function Register({ onClose, switchToLogin }) {
     }
   };
 
+  const handleLoginAfterRegistration = () => {
+    setOpenDialog(false);
+    switchToLogin();
+  };
+
   return (
     <Box
       sx={{
@@ -158,10 +163,13 @@ export default function Register({ onClose, switchToLogin }) {
         </DialogTitle>
         <DialogContent>
           <Typography variant="body1">
-            The account has been successfully added!
+            The account has been successfully created!
           </Typography>
         </DialogContent>
         <DialogActions>
+        <Button onClick={handleLoginAfterRegistration} color="primary">
+            Log in
+          </Button>
           <Button onClick={handleDialogClose} color="primary">
             OK
           </Button>
