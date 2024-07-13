@@ -13,6 +13,7 @@ import Notification from "../../components/Notification";
 import useDeviceData from "../../hooks/useDeviceData";
 import { useQueryClient } from "react-query";
 import TaskManager from "./TaskManager";
+import TriggerManager from "../triggers/TriggerManager";
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -165,9 +166,7 @@ const Settings = () => {
 
       {activeTab === 1 && <Datastream pinsData={datastream} deviceId={id} />}
 
-      {activeTab === 2 && (
-        // <TaskManager/>
-        <Box p={3}>Triggers</Box>
+      {activeTab === 2 && ( <TriggerManager deviceId={id} />
       )}
 
       {showConfirmDialog && (

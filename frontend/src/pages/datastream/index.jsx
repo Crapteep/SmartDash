@@ -125,9 +125,12 @@ const Datastream = ({ deviceId, pinsData }) => {
     setNotification(null);
   };
 
+  const handleUpdateButtonClick = () => {
+  };
+
   const handleCreateVirtualPin = (pinData) => {
     axios
-      .post(`${URL}/api/v1/virtual-pins`, pinData, {
+      .post(`${URL}/api/v1/virtual-pins/`, pinData, {
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${bearerToken}`,
@@ -238,6 +241,7 @@ const Datastream = ({ deviceId, pinsData }) => {
         <Button
           variant="contained"
           color="primary"
+          onClick={handleUpdateButtonClick}
           style={{
             fontSize: "0.8rem",
             margin: "0 5px",

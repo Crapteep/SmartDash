@@ -21,7 +21,7 @@ const Topbar = ({ setIsLoggedIn }) => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     axios.defaults.headers.common["Authorization"] = ``;
-    navigate("/login");
+    navigate("/");
     setIsLoggedIn(false);
     localStorage.clear();
   };
