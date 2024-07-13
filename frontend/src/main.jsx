@@ -25,7 +25,7 @@ axios.interceptors.response.use(
   },
   (error) => {
     if (error.response.status === 401) {
-      if (window.location.pathname !== "/login") {
+      if (window.location.pathname !== "/") {
         logoutUser();
       }
     }
@@ -36,7 +36,7 @@ axios.interceptors.response.use(
 const logoutUser = () => {
   localStorage.removeItem("token");
   localStorage.setItem("isLoggedIn", false);
-  window.location.href = "/login";
+  window.location.href = "/";
 };
 
 const queryClient = new QueryClient();

@@ -7,7 +7,7 @@ const useDevicesData = () => {
   return useQuery({
     queryKey: "devices",
     queryFn: async () => {
-      const { data } = await axios.get(`${URL}/api/v1/devices`);
+      const { data } = await axios.get(`${URL}/api/v1/devices/`);
       return data;
     },
     refetchIntervalInBackground: false,

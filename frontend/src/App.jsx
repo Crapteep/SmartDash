@@ -12,15 +12,13 @@ import FAQ from "./pages/faq";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import Devices from "./pages/devices";
-import Login from "./pages/login";
-import Register from "./pages/register";
 import PrivateRoutes from "./components/PrivateRoutes";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import Settings from "./pages/settings/Settings";
 import { UserProvider } from "./providers/UserProvider";
 import PageNotFound from "./pages/error/PageNotFound"
-
+import Home from "./pages/home";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -52,17 +50,12 @@ function App() {
                   <Route
                     element={<PrivateRoutes setIsLoggedIn={setIsLoggedIn} />}
                   >
-                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/devices" element={<Devices />} />
                     <Route path="/devices/:id" element={<Settings />} />
                     <Route path="/faq" element={<FAQ />} />
-                    
                   </Route>
-                  <Route
-                    path="/login"
-                    element={<Login setIsLoggedIn={setIsLoggedIn} />}
-                  />
-                  <Route path="/register" element={<Register />} />
+                  <Route path="/" element={<Home setIsLoggedIn={setIsLoggedIn}/>} />
                   <Route path="*" element={<PageNotFound/>} />
                 </Routes>
               </main>
