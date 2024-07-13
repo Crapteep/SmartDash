@@ -5,10 +5,12 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import CloseIcon from "@mui/icons-material/Close";
 import SettingsIcon from "@mui/icons-material/Settings";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material";
 import { tokens } from "../theme";
 import axios from "axios";
+import { generateUniqueId } from "../utils/idGenerator";
 
 import ButtonSettings from "./elements/buttons/ButtonSettings";
 import ChartSettings from "./elements/charts/ChartSettings";
@@ -56,6 +58,10 @@ export default function Widget({
   setIsDraggable,
   selectedDevice,
   onUpdateSettings,
+  setLayout,
+  setElements,
+  layout,
+  elements
 }) {
   const classes = useStyles();
   const theme = useTheme();
@@ -74,6 +80,37 @@ export default function Widget({
     getAvailablePins();
     setIsDraggable(false);
   };
+  const handleClickCopy = () => {
+    const newElementId = generateUniqueId(layout);
+    console.log(layout, id)
+    const currentItem = layout.find(item => item.element_id === id);
+    
+    if (!currentItem) {
+      console.error("Current item not found in layout");
+      return;
+    }
+    console.log(currentItem)
+    const newLayout = {
+      ...currentItem,
+      element_id: newElementId,
+    };
+  
+    const newElement = {
+      ...element,
+      element_id: newElementId,
+      widget_title: `${element.widget_title} (Copy)`,
+    };
+  
+    onDuplicateWidget(newLayout, newElement);
+  };
+
+
+  const onDuplicateWidget = (newLayout, newElement) => {
+    setLayout((prevLayout) => [...prevLayout, newLayout]);
+    setElements((prevElements) => [...prevElements, newElement]);
+  };
+
+  
 
   const getAvailablePins = () => {
     axios
@@ -185,6 +222,15 @@ export default function Widget({
           </div>
           {isEditMode ? (
             <>
+            <Tooltip title="Copy widget" enterDelay={500}>
+                <IconButton
+                  aria-label="copy"
+                  onClick={handleClickCopy}
+                  onTouchEnd={handleClickCopy}
+                >
+                  <ContentCopyIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
               <Tooltip title="Settings" enterDelay={500}>
                 <IconButton
                   aria-label="settings"
