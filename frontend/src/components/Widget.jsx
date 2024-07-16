@@ -85,14 +85,12 @@ export default function Widget({
   };
   const handleClickCopy = () => {
     const newElementId = generateUniqueId(layout);
-    console.log(layout, id)
     const currentItem = layout.find(item => item.element_id === id);
     
     if (!currentItem) {
       console.error("Current item not found in layout");
       return;
     }
-    console.log(currentItem)
     const newLayout = {
       ...currentItem,
       element_id: newElementId,

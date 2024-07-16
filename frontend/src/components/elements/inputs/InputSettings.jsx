@@ -41,7 +41,6 @@ const SliderSettings = ({ formData, handleChange, availablePins }) => {
     formData.virtual_pins[0] &&
     formData.virtual_pins[0].max_range;
 
-  console.log(formData);
   const handlePinDialogOpen = (pin) => {
     setSelectedPin(pin);
     setPinNumber(pin);

@@ -75,7 +75,6 @@ const MyJoystick = ({
   }, []);
 
   const handleJoystickMove = (evt, data) => {
-    console.log(data);
     bufferRef.current.push(data);
 
     if (!intervalId) {
