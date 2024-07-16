@@ -7,6 +7,7 @@ import TextField from "@mui/material/TextField";
 import { useWebSocketContext } from "../../../providers/WebSocketProvider";
 import { Box } from "@mui/material";
 const calculateWidth = (maxRange) => {
+  if (maxRange === null) return 0;
   const digits = maxRange.toString().length;
   return 50 * (digits + 1);
 };
@@ -23,8 +24,8 @@ export default function InputSwitch({
   const [error, setError] = useState("");
   const [inputType, setInputType] = useState("text");
 
-  const maxRange = virtual_pins[0]?.max_range || 0;
-  const minRange = virtual_pins[0]?.min_range || 0;
+  const maxRange = virtual_pins[0]?.max_range || null;
+  const minRange = virtual_pins[0]?.min_range || null;
   const labelWidth = calculateWidth(maxRange);
 
   useEffect(() => {
@@ -66,7 +67,7 @@ export default function InputSwitch({
 
   const handleInputChange = (event) => {
     const newValue = event.target.value;
-    if (inputType === "number" && (newValue < minRange || newValue > maxRange)) {
+    if (inputType === "number" && ((minRange !== null && newValue < minRange) || (maxRange !== null && newValue > maxRange))) {
       setError(`The value must be between ${minRange} and ${maxRange}`);
     } else {
       setError("");
@@ -121,7 +122,7 @@ export default function InputSwitch({
 
   const getInputProps = () => {
     console.log(inputType)
-    if (inputType === "number") {
+    if (inputType === "number" && maxRange !== null) {
       return {
         min: minRange,
         max: maxRange,
