@@ -29,8 +29,116 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const [token, setToken] = useState("");
 
-  count++;
+  // count++;
   // console.log("Aktualizacja dashboard: ", count);
+
+  useEffect(() => {
+    if (!isLoading && deviceList && deviceList.length > 0) {
+      const retrievedDevice = JSON.parse(
+        localStorage.getItem("selected_device")
+      );
+      if (retrievedDevice !== null) {
+        const retrievedDeviceId = retrievedDevice._id;
+        const foundDevice = deviceList.find(
+          (device) => device._id === retrievedDeviceId
+        );
+        if (foundDevice) {
+          handleChangeDevice(retrievedDeviceId);
+        } else {
+          handleChangeDevice(deviceList[0]._id);
+        }
+      } else {
+        handleChangeDevice(deviceList[0]._id);
+      }
+    }
+  }, [deviceList, isLoading]);
+
+  const handleChangeDevice = (deviceId) => {
+    setUsedPins({});
+    dispatch(resetLabelState());
+    const newSelectedDevice = findDeviceById(deviceList, deviceId);
+    setSelectedDevice(newSelectedDevice);
+
+    fetchUsedPinsData(newSelectedDevice._id);
+    setToken(newSelectedDevice.access_token);
+    fetchDeviceLayout(deviceId);
+
+    localStorage.setItem("selected_device", JSON.stringify(newSelectedDevice));
+  };
+
+  const fetchUsedPinsData = async (deviceId) => {
+    try {
+      const response = await axios.get(
+        `${URL}/api/v1/virtual-pins/${deviceId}/used-pins`
+      );
+      setUsedPins(response.data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const fetchDeviceLayout = async (deviceId) => {
+    try {
+      const response = await axios.get(`${URL}/api/v1/dashboard/${deviceId}`);
+      processResponseData(response);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  function findDeviceById(deviceList, deviceId) {
+    const foundDevice = deviceList?.find((device) => device._id === deviceId);
+    return foundDevice || null;
+  }
+
+
+  function processResponseData(response) {
+    if (response.data !== null) {
+      if (response.data.layout !== null) {
+        setLayout(response.data.layout);
+      } else {
+        setLayout([]);
+      }
+
+      if (response.data.elements !== null) {
+        setElements(response.data.elements);
+      } else {
+        setElements([]);
+      }
+    } else {
+      setLayout([]);
+      setElements([]);
+    }
+  }
+
+
+  const handleUpdateLayout = async () => {
+    const updatedElements = elements.map((element) => {
+      const transformedVirtualPins = element.virtual_pins.map((pin) => pin.pin);
+      return {
+        ...element,
+        virtual_pins: transformedVirtualPins,
+      };
+    });
+
+    const update_data = {
+      layout: layout,
+      elements: updatedElements,
+    };
+
+    try {
+      const response = await axios.put(`${URL}/api/v1/dashboard/${selectedDevice._id}`, update_data);
+      fetchDeviceLayout(selectedDevice._id);
+      fetchUsedPinsData(selectedDevice._id);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+
+
+  const { sendData } = useWebSocket(handleData, token, usedPins);
+
 
   async function handleData(data) {
     if (Array.isArray(data)) {
@@ -85,6 +193,10 @@ const Dashboard = () => {
         case "diode":
           //  kod dla akcji 'diode'
           break;
+
+        case "joystick":
+          //  kod dla akcji 'diode'
+          break;
         default:
           console.log(`Nieznany reducer: ${reducerName}`);
           break;
@@ -92,108 +204,6 @@ const Dashboard = () => {
     }
   }
 
-  useEffect(() => {
-    if (!isLoading && deviceList && deviceList.length > 0) {
-      const retrievedDevice = JSON.parse(
-        localStorage.getItem("selected_device")
-      );
-      if (retrievedDevice !== null) {
-        const retrievedDeviceId = retrievedDevice._id;
-        const foundDevice = deviceList.find(
-          (device) => device._id === retrievedDeviceId
-        );
-        if (foundDevice) {
-          handleChangeDevice(retrievedDeviceId);
-        } else {
-          handleChangeDevice(deviceList[0]._id);
-        }
-      } else {
-        handleChangeDevice(deviceList[0]._id);
-      }
-    }
-  }, [deviceList, isLoading]);
-
-  const handleUpdateLayout = async () => {
-    const updatedElements = elements.map((element) => {
-      const transformedVirtualPins = element.virtual_pins.map((pin) => pin.pin);
-      return {
-        ...element,
-        virtual_pins: transformedVirtualPins,
-      };
-    });
-
-    const update_data = {
-      layout: layout,
-      elements: updatedElements,
-    };
-
-    try {
-      const response = await axios.put(`${URL}/api/v1/dashboard/${selectedDevice._id}`, update_data);
-      fetchDeviceLayout(selectedDevice._id);
-      fetchUsedPinsData(selectedDevice._id);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  function processResponseData(response) {
-    if (response.data !== null) {
-      if (response.data.layout !== null) {
-        setLayout(response.data.layout);
-      } else {
-        setLayout([]);
-      }
-
-      if (response.data.elements !== null) {
-        setElements(response.data.elements);
-      } else {
-        setElements([]);
-      }
-    } else {
-      setLayout([]);
-      setElements([]);
-    }
-  }
-
-  const fetchUsedPinsData = async (deviceId) => {
-    try {
-      const response = await axios.get(
-        `${URL}/api/v1/virtual-pins/${deviceId}/used-pins`
-      );
-      setUsedPins(response.data);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  const fetchDeviceLayout = async (deviceId) => {
-    try {
-      const response = await axios.get(`${URL}/api/v1/dashboard/${deviceId}`);
-      processResponseData(response);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  const handleChangeDevice = (deviceId) => {
-    setUsedPins({});
-    dispatch(resetLabelState());
-    const newSelectedDevice = findDeviceById(deviceList, deviceId);
-    setSelectedDevice(newSelectedDevice);
-
-    fetchUsedPinsData(newSelectedDevice._id);
-    setToken(newSelectedDevice.access_token);
-    fetchDeviceLayout(deviceId);
-
-    localStorage.setItem("selected_device", JSON.stringify(newSelectedDevice));
-  };
-
-  function findDeviceById(deviceList, deviceId) {
-    const foundDevice = deviceList?.find((device) => device._id === deviceId);
-    return foundDevice || null;
-  }
-
-  const { sendData } = useWebSocket(handleData, token, usedPins);
   return (
     <WebSocketProvider sendData={sendData}>
       <Box m="20px">
