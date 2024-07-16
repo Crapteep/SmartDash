@@ -23,6 +23,7 @@ const widgetNames = {
   d: "Label",
   e: "Slider",
   f: "Input",
+  g: "Joystick"
 };
 
 const chartSettings = {
@@ -97,13 +98,28 @@ const inputSettings = {
   send_immediately: false,
 }
 
+
+const joystickSettings = {
+  element_type: "joystick",
+  widget_title: "Joystick",
+  alias: "",
+  virtual_pins: [],
+  background_color: "",
+  color: '#808589',
+  size: 70,
+  mode: 'static',
+  lock_x: false,
+  lock_y: false,
+  rest_joystick: true
+}
+
 const initialLayoutDefaults = {
   chart: {
     w: 10,
     h: 6,
     x: 0,
     y: 0,
-    minW: 5,
+    minW: 6,
     minH: 6,
     maxW: 24,
     maxH: 24,
@@ -171,7 +187,18 @@ const initialLayoutDefaults = {
     moved: false,
     static: false,
   },
-
+  joystick: {
+    w: 10,
+    h: 6,
+    x: 0,
+    y: 0,
+    minW: 5,
+    minH: 5,
+    maxW: 24,
+    maxH: 24,
+    moved: false,
+    static: false,
+  },
 
 };
 
@@ -182,6 +209,7 @@ const widgetSettings = {
   d: { ...labelSettings },
   e: { ...sliderSettings },
   f: { ...inputSettings },
+  g: { ...joystickSettings},
 };
 
 const AddList = ({

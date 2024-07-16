@@ -87,6 +87,7 @@ async def get_available_pins(id_: str = Depends(Validator.validate_device_id),
         'label': ["str", "int", "float"],
         'diode': ["int"],
         'input': ["str", "int", "float"],
+        'joystick': ["int", "float"],
     }
 
     data_type = data_type_mapping[q]
@@ -110,7 +111,9 @@ async def get_used_pins(id_: str = Depends(Validator.is_valid_object_id),
             "button": [],
             "switch": [],
             "slider": [],
-            "diode": []
+            "diode": [],
+            "input": [],
+            "joystick": []
         }
     if not elements:
         return result
