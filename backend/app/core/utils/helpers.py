@@ -1,15 +1,11 @@
 from bson import ObjectId
-from fastapi import HTTPException, WebSocket, WebSocketDisconnect, Path
+from fastapi import HTTPException, WebSocket
 from ..models import crud
 from .error_messages import ErrorMessages
 import asyncio
-from backend.app import main
 from datetime import datetime, timedelta
-from itertools import groupby
-from ..schemas.response import WritePin
 from async_lru import alru_cache
 from .validators import Validator
-import time
 from functools import wraps
 from collections import defaultdict
 from websockets.exceptions import ConnectionClosedError
@@ -27,6 +23,7 @@ class MessageCode:
     SEND_SMS = 5
     SEND_EMAIL = 6
     ERROR = 8
+    JOYSTICK = 9
 
 
 
