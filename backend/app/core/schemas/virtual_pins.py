@@ -44,3 +44,4 @@ class QOptions(str, Enum):
     diode = 'diode'
     switch = 'switch'
     input_val = 'input'
+    joystick = 'joystick'

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, validator
 from datetime import datetime
-from .elements import ButtonCreate, ChartCreate, SwitchCreate, LabelCreate, SliderCreate, InputCreate
+from .elements import ButtonCreate, ChartCreate, SwitchCreate, LabelCreate, SliderCreate, InputCreate, JoystickCreate
 from ..utils.validators import Validator
 
 
@@ -26,7 +26,7 @@ class LayoutItem(BaseModel):
 
 class UpdateDashboard(BaseModel):
     layout: list
-    elements: list[ChartCreate | ButtonCreate | SwitchCreate | LabelCreate | SliderCreate | InputCreate]
+    elements: list[ChartCreate | ButtonCreate | SwitchCreate | LabelCreate | SliderCreate | InputCreate | JoystickCreate]
 
 
 class DeviceCreate(BaseModel):

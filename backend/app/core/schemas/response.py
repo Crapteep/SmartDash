@@ -1,7 +1,7 @@
 from pydantic import BaseModel, constr, validator
-from typing import Union
+from typing import Union, Optional
 import re
-
+from dataclasses import dataclass
 
 def pin_regex_pattern():
     return r'^V(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
@@ -55,3 +55,31 @@ class SetProperty(BaseModel):
 
 class SwitchTrigger(PinModel):
     value: bool
+
+
+
+class Vector2D(BaseModel):
+    x: float = 0.0
+    y: float = 0.0
+
+class Angle(BaseModel):
+    radian: float = 0.0
+    degree: float = 0.0
+
+class Direction(BaseModel):
+    x: Optional[str] = None
+    y: Optional[str] = None
+    angle: Optional[str] = None
+
+    
+class JoystickData(BaseModel):
+    position: Vector2D = Vector2D()
+    force: float = 0.0
+    pressure: float = 0.0
+    distance: float = 0.0
+    angle: Angle = Angle()
+    direction: Direction = Direction()
+
+
+class Joystick(PinModel):
+    value: Optional[JoystickData] = None

@@ -77,6 +77,16 @@ class SliderCreate(ElementCreateBase):
     step: Union[float, int]
 
 
+class JoystickCreate(ElementCreateBase):
+    background_color: str
+    color: str
+    mode: str
+    lock_x: bool
+    lock_y: bool
+    size: int = Field(..., ge=0, lt=150, description="Size of the joystick widget")
+    rest_joystick: bool
+
+
 class InputCreate(ElementCreateBase):
     send_immediately: bool = Field(..., description="Flag to indicate if the value should be sent immediately.")
     input_type: Union[str, None] = Field("text", description="Type of input, can be 'number' or 'text'")
