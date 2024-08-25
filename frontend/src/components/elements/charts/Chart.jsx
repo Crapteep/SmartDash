@@ -35,6 +35,7 @@ const timeRanges = [
   { label: "1d", value: "1d" },
   { label: "3d", value: "3d" },
   { label: "7d", value: "7d" },
+  { label: "30d", value: "30d" },
 ];
 
 const timeRangesInSeconds = {
@@ -46,6 +47,7 @@ const timeRangesInSeconds = {
   "1d": 86400,
   "3d": 259200,
   "7d": 604800,
+  "30d": 2592000
 };
 
 function MyChart({
