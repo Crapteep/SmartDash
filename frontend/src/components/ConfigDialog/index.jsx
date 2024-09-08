@@ -22,7 +22,7 @@ const ConfigDialog = ({
   selectedDevice,
   isConfiguration,
 }) => {
-  const URL = import.meta.env.VITE_APP_API_URL;
+  const URL = import.meta.env.VITE_API_URL;
   const [deviceName, setDeviceName] = useState(selectedDevice.name);
   const [deviceHardware, setDeviceHardware] = useState(selectedDevice.hardware);
   const [deviceConfiguration, setDeviceConfiguration] = useState(

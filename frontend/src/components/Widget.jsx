@@ -69,7 +69,7 @@ export default function Widget({
   const classes = useStyles();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const URL = import.meta.env.VITE_APP_API_URL;
+  const URL = import.meta.env.VITE_API_URL;
 
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState(element);

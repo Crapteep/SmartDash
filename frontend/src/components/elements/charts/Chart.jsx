@@ -87,7 +87,7 @@ function MyChart({
     ? chart_type.split(":")[1]
     : "linear";
 
-  const URL = import.meta.env.VITE_APP_API_URL;
+  const URL = import.meta.env.VITE_API_URL;
 
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
