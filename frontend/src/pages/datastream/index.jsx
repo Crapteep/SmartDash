@@ -299,6 +299,7 @@ const Datastream = ({ deviceId, pinsData }) => {
             label="Pin"
             fullWidth
             value={newRow.pin}
+            placeholder="e.g. V3"
             onChange={handleInputChange}
           />
           <Select
