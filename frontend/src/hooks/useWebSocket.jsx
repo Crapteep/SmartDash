@@ -2,12 +2,13 @@ import { useEffect, useRef } from "react";
 
 export const useWebSocket = (handleData, token = "", usedPins) => {
   const ws = useRef(null);
-  const URL = import.meta.env.VITE_APP_API_URL;
+  const URL = import.meta.env.VITE_API_URL;
   useEffect(() => {
     const connectWebSocket = () => {
       const URLWithoutProtocol = URL.replace(/^https?:\/\//, "");
+      const wsProtocol = URL.startsWith("https") ? "wss://" : "ws://";
       ws.current = new WebSocket(
-        `wss://${URLWithoutProtocol}/api/v1/ws/?token=${token}`
+        `${wsProtocol}${URLWithoutProtocol}/api/v1/ws/?token=${token}`
       );
 
       ws.current.onopen = () => {
