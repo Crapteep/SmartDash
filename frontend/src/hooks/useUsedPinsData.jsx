@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import axios from "axios";
 
-const URL = import.meta.env.VITE_APP_API_URL;
+const URL = import.meta.env.VITE_API_URL;
 
 const useUsedPinsData = (deviceId) => {
   return useQuery({
