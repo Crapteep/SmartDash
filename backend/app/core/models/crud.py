@@ -5,13 +5,12 @@ from bson import ObjectId
 import logging
 import json
 from datetime import datetime
-from ..settings import Settings
+from ..settings import settings
 from typing import Any
 from functools import wraps
 from pymongo.errors import PyMongoError
 import asyncio
 
-settings = Settings.get()
 
 client = AsyncIOMotorClient(settings.db_url)
 database = client.SmartDash

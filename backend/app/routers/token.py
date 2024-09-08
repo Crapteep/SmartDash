@@ -3,9 +3,8 @@ from ..core.schemas import token
 from fastapi.security import OAuth2PasswordRequestForm
 from ..auth import auth_handler
 from datetime import timedelta
-from ..core.settings import Settings
+from ..core.settings import settings
 
-settings = Settings.get()
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
 

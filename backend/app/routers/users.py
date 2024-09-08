@@ -1,9 +1,7 @@
 from fastapi import APIRouter, Depends
 from ..core.schemas import users
 from ..auth import auth_handler
-from ..core.settings import Settings
-
-settings = Settings.get()
+from ..core.settings import settings
 
 
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
