@@ -19,10 +19,12 @@ export default function Login({ setIsLoggedIn, onClose, switchToRegister }) {
     username: "",
     password: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false); 
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     axios
       .post(`${URL}/token/`, formData, {
@@ -41,6 +43,9 @@ export default function Login({ setIsLoggedIn, onClose, switchToRegister }) {
         if (error.response && error.response.status === 401) {
           setLoginDisplayError(error.response.data.detail);
         }
+      })
+      .finally(() => {
+        setIsSubmitting(false);
       });
   };
 
@@ -115,8 +120,9 @@ export default function Login({ setIsLoggedIn, onClose, switchToRegister }) {
           fullWidth
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
+          disabled={isSubmitting}
         >
-          Sign In
+          {isSubmitting ? "Signing In..." : "Sign In"}
         </Button>
         <Grid container>
           <Grid item xs>

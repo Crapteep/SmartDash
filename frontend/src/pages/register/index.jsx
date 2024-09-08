@@ -16,6 +16,7 @@ export default function Register({ onClose, switchToLogin }) {
   const URL = import.meta.env.VITE_APP_API_URL;
   const [emailDisplayError, setEmailDisplayError] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     username: "",
@@ -24,6 +25,7 @@ export default function Register({ onClose, switchToLogin }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     axios
       .post(`${URL}/api/v1/signup/`, {
         ...formData,
@@ -38,6 +40,9 @@ export default function Register({ onClose, switchToLogin }) {
         if (error.response && error.response.status === 422) {
           setEmailDisplayError("Please enter the correct email or password.");
         }
+      })
+      .finally(() => {
+        setIsSubmitting(false);
       });
   };
 
@@ -139,8 +144,9 @@ export default function Register({ onClose, switchToLogin }) {
           fullWidth
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
+          disabled={isSubmitting}
         >
-          Sign Up
+          {isSubmitting ? "Signing Up..." : "Sign Up"}
         </Button>
         <Grid container justifyContent="flex-end">
           <Grid item>
