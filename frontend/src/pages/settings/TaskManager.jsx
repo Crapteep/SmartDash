@@ -29,7 +29,7 @@ const TaskManager = ({ tasksData }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [enabled, setEnabled] = useState(false);
-  const URL = import.meta.env.VITE_APP_API_URL;
+  const URL = import.meta.env.VITE_API_URL;
   const bearerToken = localStorage.getItem("token");
   const [open, setOpen] = useState(false);
   const theme = useTheme();

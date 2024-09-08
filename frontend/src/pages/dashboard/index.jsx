@@ -20,7 +20,7 @@ let count = 0;
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const URL = import.meta.env.VITE_APP_API_URL;
+  const URL = import.meta.env.VITE_API_URL;
   const { isLoading, data: deviceList } = useDevicesData();
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [layout, setLayout] = useState([]);

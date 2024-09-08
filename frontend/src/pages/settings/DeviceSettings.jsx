@@ -25,7 +25,7 @@ const DeviceSettings = ({
   const [formData, setFormData] = useState(null);
   const [showFullToken, setShowFullToken] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
-  const URL = import.meta.env.VITE_APP_API_URL;
+  const URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     setFormData(deviceData);
@@ -97,22 +97,41 @@ const DeviceSettings = ({
   };
 
   const copyAccessToken = () => {
-    navigator.clipboard
-      .writeText(access_token)
-      .then(() => {
+    const textarea = document.createElement('textarea');
+    textarea.value = access_token;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'absolute';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    
+    textarea.select();
+    
+    try {
+      const successful = document.execCommand('copy');
+      if (successful) {
         setNotification({
           type: "info",
           message: "Access token copied to clipboard!",
         });
-      })
-      .catch((error) => {
-        console.error("Failed to copy access token: ", error);
+      } else {
+        console.error('Failed to copy using document.execCommand');
         setNotification({
           type: "error",
           message: "Failed to copy access token. Please try again.",
         });
+      }
+    } catch (error) {
+      console.error("Failed to copy access token: ", error);
+      setNotification({
+        type: "error",
+        message: "Failed to copy access token. Please try again.",
       });
+    } finally {
+      document.body.removeChild(textarea);
+    }
   };
+  
+  
 
   const closeNotification = () => {
     setNotification(null);

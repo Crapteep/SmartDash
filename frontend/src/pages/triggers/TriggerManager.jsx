@@ -26,7 +26,7 @@ const TriggerManager = ({ deviceId }) => {
   const [triggerToDelete, setTriggerToDelete] = useState(null);
   const [newTrigger, setNewTrigger] = useState({ pin: "", interval: "" });
   const [notification, setNotification] = useState(null);
-  const URL = import.meta.env.VITE_APP_API_URL;
+  const URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     fetchTriggers();

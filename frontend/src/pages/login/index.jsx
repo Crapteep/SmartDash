@@ -13,7 +13,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 export default function Login({ setIsLoggedIn, onClose, switchToRegister }) {
-  const URL = import.meta.env.VITE_APP_API_URL;
+  const URL = import.meta.env.VITE_API_URL;
   const [loginDisplayError, setLoginDisplayError] = useState("");
   const [formData, setFormData] = useState({
     username: "",

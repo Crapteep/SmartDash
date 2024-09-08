@@ -13,7 +13,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material
 import { BsFillPersonCheckFill } from "react-icons/bs";
 
 export default function Register({ onClose, switchToLogin }) {
-  const URL = import.meta.env.VITE_APP_API_URL;
+  const URL = import.meta.env.VITE_API_URL;
   const [emailDisplayError, setEmailDisplayError] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);

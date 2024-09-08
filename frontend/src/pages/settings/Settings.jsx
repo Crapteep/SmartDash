@@ -33,7 +33,7 @@ const Settings = () => {
   const { data: deviceData, isLoading, isError } = useDeviceData(id);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const URL = import.meta.env.VITE_APP_API_URL;
+  const URL = import.meta.env.VITE_API_URL;
   const bearerToken = localStorage.getItem("token");
 
   useEffect(() => {
