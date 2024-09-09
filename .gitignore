@@ -1,3 +1,43 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+frontend/src/components/Buttons/OutlinedButton.jsx
+frontend/src/components/AreaChart.jsx
+frontend/src/components/AxisLabel.jsx
+frontend/src/components/BarChart.jsx
+frontend/src/components/CustomLineChart.jsx
+frontend/src/components/CustomLineChart2.jsx
+frontend/src/components/PieChart.jsx
+frontend/src/components/ScatterChart.jsx
+frontend/src/components/StatBox.jsx
+frontend/src/pages/test/
+.env
+
+.vscode
+node_modules/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
