@@ -28,14 +28,14 @@ async def handle_trigger_switch(pin: str,  device_id: str, new_state: bool):
     if trigger_exists.running == new_state:
         return {"message": "Trigger has an up-to-date state."}
 
-    updated_trigger = await crud.Trigger.update(trigger_exists.id_, trigger_exists.user_id, {"running": new_state})
+    updated_trigger = await crud.Trigger.update(trigger_exists.id, trigger_exists.user_id, {"running": new_state})
     if not updated_trigger:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     if new_state:
         await main.manager.task_manager.add_trigger(main.manager.connection_manager, run_trigger, trigger_exists, device_id)
     else:
-        await main.manager.task_manager.remove_trigger(trigger_exists.id_, device_id)
+        await main.manager.task_manager.remove_trigger(trigger_exists.id, device_id)
 
     return {"message": f"Trigger successfully {'started' if new_state else 'stopped'}."}
 

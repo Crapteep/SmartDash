@@ -6,7 +6,7 @@ from ..core.schemas.response import ReadPin, WritePin, SetProperty, GetProperty,
 from pydantic import ValidationError
 from ..core.models import crud
 from ..core.utils.helpers import MessageCode
-from backend.app import main
+from app import main
 from ..core.workers.tasks import run_trigger
 from .triggers import handle_trigger_switch
 import time

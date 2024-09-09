@@ -14,9 +14,7 @@ router = APIRouter(
 
 
 @router.get("/me", response_model=users.User)
-async def read_users_me(current_user: users.User = Depends(auth_handler.get_current_user)):
-    return current_user
-
-
+async def read_users_me(current_user: dict = Depends(auth_handler.get_current_user)):
+    return users.User.from_mongo(current_user)
 
 

@@ -1,16 +1,22 @@
-from pydantic import BaseModel, Field, constr, validator
+from pydantic import BaseModel, Field, field_validator
 from typing import Union, Optional
 from datetime import datetime
 from ..utils.helpers import MessageCode
 from bson import ObjectId
 from enum import Enum
-
+import re
 
 
 class TriggerBase(BaseModel):
     code: int = MessageCode.TRIGGER
-    pin: constr(min_length=2, max_length=4, regex=r'^V(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')
+    pin: str
     interval: Union[int, float] = Field(..., ge=0.1)
+
+    @field_validator('pin')
+    def pin_must_match_regex(cls, v):
+        if not re.match(r'^V(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$', v):
+            raise ValueError('Invalid pin format')
+        return v
 
 
 class Trigger(TriggerBase):
@@ -27,14 +33,14 @@ class CreateTrigger(TriggerBase):
 
 class TriggerResponse(TriggerBase):
     running: bool
-    id_: str = Field(alias="_id")
+    id: str = Field(alias="_id")
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class TriggerWithId(Trigger):
-    id_: str = Field(alias="_id")
+    id: str = Field(alias="_id")
 
     
 class DeleteTriggerResponse(BaseModel):
@@ -42,6 +48,12 @@ class DeleteTriggerResponse(BaseModel):
 
 
 class TriggerSwitchInput(BaseModel):
-    pin: constr(min_length=2, max_length=4, regex=r'^V(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')
+    pin: str
     device_id: str
     new_state: bool
+
+    @field_validator('pin')
+    def pin_must_match_regex(cls, v):
+        if not re.match(r'^V(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$', v):
+            raise ValueError('Invalid pin format')
+        return v

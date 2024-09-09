@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator, Field
+from pydantic import BaseModel, field_validator, Field
 from datetime import datetime
 from typing import Union
 from fastapi import HTTPException, status
@@ -19,10 +19,10 @@ class ElementCreate(BaseModel):
     updated_at: datetime = datetime.now()
 
 class Element(ElementCreate):
-    _id: str
+    id: str
     
     class Config:
-        orm_mode = True
+        from_atributes = True
 
 
 
@@ -91,7 +91,7 @@ class InputCreate(ElementCreateBase):
     send_immediately: bool = Field(..., description="Flag to indicate if the value should be sent immediately.")
     input_type: Union[str, None] = Field("text", description="Type of input, can be 'number' or 'text'")
 
-    @validator('input_type')
+    @field_validator('input_type')
     def validate_input_type(cls, v):
         if v not in ["number", "text"]:
             raise ValueError("input_type must be 'number' or 'text'")

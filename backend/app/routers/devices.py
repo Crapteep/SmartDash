@@ -29,6 +29,8 @@ async def get_device(id_: str = Depends(Validator.validate_device_id),
                     current_user: users.User = Depends(auth_handler.get_current_user)):
 
     device = await crud.Device.get_device(current_user["_id"], id_)
+    if not device:
+        raise HTTPException(404, detail="Devices not found!")
     device.pop("layout")
     device.pop("user_id")
     device.pop("_id")

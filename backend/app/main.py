@@ -22,7 +22,6 @@ app.include_router(archive_data.router, prefix="/api/v1")
 
 manager = Manager()
 
-print(settings.backend_cors_origins_list)
 if settings.backend_cors_origins:
     app.add_middleware(
         CORSMiddleware,

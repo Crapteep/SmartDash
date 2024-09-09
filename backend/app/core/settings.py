@@ -1,4 +1,5 @@
-from pydantic import BaseSettings, Field
+from pydantic_settings import BaseSettings
+from pydantic import Field
 from functools import lru_cache
 from pathlib import Path
 
@@ -12,7 +13,8 @@ class Settings(BaseSettings):
     client_url: str | None = Field(default='http://localhost:5173/', env="CLIENT_URL")
     backend_cors_origins: str | None = Field(default=None, env="BACKEND_CORS_ORIGINS")
     project_name: str | None = Field(default='SmartDash', env="PROJECT_NAME")
-
+    docker_image_backend: str
+    
     @property
     def backend_cors_origins_list(self) -> list[str]:
         if self.backend_cors_origins:

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, constr, validator
+from pydantic import BaseModel, field_validator, Field
 from datetime import datetime
 from typing import Union
 from fastapi import HTTPException, status
@@ -19,10 +19,10 @@ class PinData(BaseModel):
 
 class RelativeTime(BaseModel):
     pin: str
-    time_ago: constr(min_length=2)
+    time_ago: str = Field(..., min_length=2)
 
 
-    @validator('time_ago')
+    @field_validator('time_ago')
     def parse_time(cls, v):
         if isinstance(v, str):
             if not v:
@@ -55,6 +55,6 @@ class RelativeTime(BaseModel):
                                 detail="Invalid time range. The resulting timestamp would be negative.")
 
 
-    @validator('pin')
+    @field_validator('pin')
     def validate_pin(cls, q):
         return Validator.is_valid_pin(q)

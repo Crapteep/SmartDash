@@ -1,7 +1,6 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel
 from datetime import datetime
 from .elements import ButtonCreate, ChartCreate, SwitchCreate, LabelCreate, SliderCreate, InputCreate, JoystickCreate
-from ..utils.validators import Validator
 
 
 
@@ -50,9 +49,6 @@ class DeviceUpdate(BaseModel):
     configuration: DeviceConfiguration
     description: str
 
-
-class DeviceResponse(DeviceCreate):
-    _id: str = Field(..., alias="id")
 
 
 

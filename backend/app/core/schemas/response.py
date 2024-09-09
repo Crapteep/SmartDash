@@ -1,4 +1,4 @@
-from pydantic import BaseModel, constr, validator
+from pydantic import BaseModel, field_validator, Field
 from typing import Union, Optional
 import re
 from dataclasses import dataclass
@@ -14,7 +14,7 @@ class ResponseModel(BaseModel):
 
 class ReceivedData(BaseModel):
     code: int
-    pin: constr(min_length=2, max_length=4)
+    pin: str = Field(..., min_length=2, max_length=4)
     value: Union[str, int, float, bool]
     property: str | None = None
 
@@ -23,7 +23,7 @@ class PinModel(BaseModel):
     code: int
     pin: str
 
-    @validator('pin')
+    @field_validator('pin')
     def validate_pin(cls, v):
         pattern = pin_regex_pattern()
         if not re.match(pattern, str(v)):
