@@ -1,10 +1,10 @@
-version: '3.8'
-
 services:
   db:
     image: mongo:latest
     container_name: mongo-db
     restart: always
+    ports:
+      - "27017:27017"
     volumes:
       - mongo-data:/data/db
 
@@ -12,8 +12,8 @@ services:
     build:
       context: ./backend
       args:
-        INSTALL_DEV: ${INSTALL_DEV-false}
-    image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
+        INSTALL_DEV: ${INSTALL_DEV:-false}
+    image: "${DOCKER_IMAGE_BACKEND:-my_default_backend_image}:${TAG:-latest}"
     container_name: backend
     restart: always
     depends_on:
@@ -35,7 +35,7 @@ services:
       context: ./frontend
       args:
         VITE_API_URL: ${VITE_API_URL}
-    image: "${DOCKER_IMAGE_FRONTEND:-my_default_frontend_image}:latest"
+    image: "${DOCKER_IMAGE_FRONTEND:-my_default_frontend_image}:${TAG:-latest}"
     container_name: frontend
     restart: always
     env_file:
