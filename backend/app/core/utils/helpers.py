@@ -238,12 +238,12 @@ class TaskManager:
             self.tasks[device_id] = [] 
         
         for existing_task in self.tasks[device_id]:
-            if existing_task["id"] == trigger.id_:
+            if existing_task["id"] == trigger.id:
                 print(f'Trigger already running! {device_id}')
                 return
             
         task_instance = asyncio.create_task(task(connection_manager, trigger, device_id))
-        self.tasks[device_id].append({"id": trigger.id_, "task": task_instance})
+        self.tasks[device_id].append({"id": trigger.id, "task": task_instance})
         print(f"Trigger created! {device_id}")
 
 
