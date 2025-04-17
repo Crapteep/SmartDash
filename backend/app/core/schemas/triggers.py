@@ -37,10 +37,14 @@ class TriggerResponse(TriggerBase):
 
     class Config:
         from_attributes = True
+        populate_by_name = True
 
 
 class TriggerWithId(Trigger):
     id: str = Field(alias="_id")
+    class Config:
+        from_attributes = True
+        populate_by_name = True
 
     
 class DeleteTriggerResponse(BaseModel):
