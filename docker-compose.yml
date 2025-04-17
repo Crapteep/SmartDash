@@ -21,6 +21,7 @@ services:
     env_file:
       - .env
     environment:
+      - PROJECT_NAME=${PROJECT_NAME}
       - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS}
       - SECRET_KEY_USER=${SECRET_KEY_USER?Variable not set}
       - SECRET_KEY_DEVICE=${SECRET_KEY_DEVICE?Variable not set}

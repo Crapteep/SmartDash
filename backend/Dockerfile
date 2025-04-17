@@ -3,6 +3,11 @@ FROM python:3.10-slim
 
 WORKDIR /app/
 
+# Update package list and install curl
+RUN apt-get update && \
+    apt-get install -y curl && \
+    apt-get clean
+    
 # Install Poetry
 RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python && \
     cd /usr/local/bin && \
