@@ -90,9 +90,13 @@ class ConnectionManager:
         self.archive_data.setdefault(device_id, [])
 
         data_dict = {'value': data.value, 'timestamp': data.timestamp}
-        if not isinstance(data.value, list):
+        if isinstance(data.value, list):
+            for item in data.value:
+                item['timestamp'] = data.timestamp
+            data.value = data.value
+        else:
             data.value = [{'value': data.value, 'timestamp': data.timestamp}]
-        
+            
         pin_found = False
         for element in self.archive_data[device_id]:
             if element["pin"] == data.pin:
@@ -155,12 +159,9 @@ class ConnectionManager:
 
 
     async def process_data_buffer(self, device_id: str, client_id: str):
-        """
-        Processes data buffer for all clients with the same device_id.
-        """
         if device_id not in self.active_connections:
             return
-        
+
         latest_data_dict = {}
 
         for client in self.active_connections[device_id]:
@@ -171,7 +172,8 @@ class ConnectionManager:
             await self.broadcast(list(latest_data_dict.values()), device_id, exclude_client_id=client_id)
             for cid in self.active_connections[device_id]:
                 self.message_buffer[cid] = [data for data in self.message_buffer[cid] if data['pin'] not in latest_data_dict]
-                
+
+                    
                 
     def get_latest_data(self, client_id: str) -> dict:
         """
