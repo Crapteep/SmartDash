@@ -32,7 +32,7 @@ class PinModel(BaseModel):
 
     
 class WritePin(PinModel):
-    value: Union[ float, int, bool, str]
+    value: Union[float, int, bool, str, list[dict]]
     timestamp: float | None = None
 
 
